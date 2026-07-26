@@ -10,17 +10,18 @@ extra-credit), and closed by a PR via "Closes #N". The tables below link into th
 and PRs. Replace every <placeholder> and delete this comment before you submit.
 -->
 
-# <App Name>
+# Study Guide
 
-<One-line description.> CST 338 Project 2 — Team **<Team Name>**.
+Study Guide is a JavaFX application that allows users to create an account, navigate through trivia questions by category, take quizzes, and receive scores that are saved and tracked.
+
+CST 338 Project 2 — Team **Team 1**.
 
 ## Team & Slice Ownership
 | Slice | Owner | GitHub username | Issues | Branch(es) | PR(s) | Enhancement chosen | Status |
 |-------|-------|-----------------|--------|------------|-------|--------------------|--------|
-| 1 — Accounts | | | #1 #2 | name/login | #12 | Data binding | complete |
-| 2 — <Slice> | | | | | | | in-progress |
-| 3 — <Slice> | | | | | | | planned |
-| 4 — <Slice> | | | | | | | planned |
+| 1 — Accounts | Jason Hamilton | Stackpyr | | | | ScribeJava for Social OAUTH | Planned |
+| 2 — Question Bank | Analiza Boehning | aboehning-cs | | | | | Planned |
+| 3 — Quiz Engine | Sawyer Phillips | sawyerphillips | | | | | Planned |
 
 _Status values: planned · in-progress · complete_
 
@@ -28,14 +29,13 @@ _Status values: planned · in-progress · complete_
 _Slices and beyond-scope items we are consciously NOT building. Move an item to a tracked
 Issue if the team later decides to attempt it for extra credit._
 
-- Slice 5 — <name>: not building (team size).
-- <Slice 2>: <beyond-scope item> — out of scope.
-- <Slice 3>: <beyond-scope item> — out of scope.
+- Slice 4 — Leaderboard & History: not building (team size).
+- Slide 5 - Study Mode & Tagging: not building (team size).
 
 ## Code Review Log
 | PR | Author | Human reviewer(s) | AI review (link) | Outcome |
 |----|--------|-------------------|------------------|---------|
-| #12 | | | <link or commit> | merged |
+| | | | | |
 
 ## AI Usage Log
 - **AI-drafted tests:** <link to TESTING.md / commit> — per owner.
@@ -44,7 +44,7 @@ Issue if the team later decides to attempt it for extra credit._
 ## Extra Credit Log
 | Item | Who | Evidence (Issue/PR) |
 |------|-----|---------------------|
-| Built Slice 5 | | #34 |
+| | | |
 
 ## Build & Run
 ```
