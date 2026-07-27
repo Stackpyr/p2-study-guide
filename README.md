@@ -21,7 +21,7 @@ CST 338 Project 2 — Team **Team 1**.
 |-------|-------|-----------------|--------|------------|-------|----------------------------------|--------|
 | 1 — Accounts | Jason Hamilton | Stackpyr | | | | ScribeJava for Social OAUTH      | Planned |
 | 2 — Question Bank | Analiza Boehning | aboehning-cs | | | | Advanced Query (Search & Filter) | Planned |
-| 3 — Quiz Engine | Sawyer Phillips | sawyerphillips | | | |                                  | Planned |
+| 3 — Quiz Engine | Sawyer Phillips | sawyerphillips | | | | Alerts and Notifications | Planned |
 
 _Status values: planned · in-progress · complete_
 
