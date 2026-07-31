@@ -1,5 +1,6 @@
 /**
- * Based off of Dr C's DatabaseManager slide
+ * Based off of Dr C's DatabaseManager slide Singleton for the database connection and creating the
+ * database schema
  *
  * @author: Jason Hamilton
  * @created: 7/30/2026
@@ -13,19 +14,21 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabaseManager {
+
   private static final String DB_URL = "jdbc:sqlite:otterdobetter.sqlite";
   private static final String DB_SCHEMA_SCRIPT = "/create_database.sql";
   private static DatabaseManager instance; // singleton
-  private Connection connection;
+  private static Connection connection;
 
   /**
-  * Private constructor to enforce a singleton pattern
-  */
+   * Private constructor to enforce a singleton pattern
+   */
   private DatabaseManager() {
     try {
       connection = DriverManager.getConnection(DB_URL);
       try (Statement stmt = connection.createStatement()) {
         // to enforce foreign key constraints
+        // probably overkill for this assignment :)
         stmt.execute("PRAGMA foreign_keys = ON");
       }
       createSchema();
@@ -34,10 +37,14 @@ public class DatabaseManager {
     }
   }
 
+  public static Connection getConnection() {
+    return connection;
+  }
+
   /**
-  * Singleton pattern
-  * @return instance of DatabaseManager
-  */
+   * Singleton pattern
+   * @return instance of DatabaseManager
+   */
   public static DatabaseManager getInstance() {
     if (instance == null) {
       instance = new DatabaseManager();
@@ -46,12 +53,11 @@ public class DatabaseManager {
   }
 
   /**
-  * Closes a connection to the database
-  */
+   * Closes a connection to the database
+   */
   public void close() {
     try {
-      if (connection != null && !connection.isClosed())
-      {
+      if (connection != null && !connection.isClosed()) {
         connection.close();
       }
     } catch (SQLException e) {
@@ -61,14 +67,13 @@ public class DatabaseManager {
   }
 
   /**
-  * Creates the database schema
-  */
+   * Creates the database schema
+   */
   private void createSchema() {
     // load file
     System.out.println("Creating schema...");
     String createSchemaSql = getClass().getResource(DB_SCHEMA_SCRIPT).getFile();
-    try (Statement createSchemaStmt = connection.createStatement())
-    {
+    try (Statement createSchemaStmt = connection.createStatement()) {
       for (String sql : createSchemaSql.split(";")) {
         if (!sql.trim().isEmpty()) {
           createSchemaStmt.execute(sql.trim());

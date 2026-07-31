@@ -11,6 +11,6 @@ package Utilities;
 public interface PasswordHasher {
   String generateSalt();
   String hashPassword(String password, String salt);
-  boolean verifyPassword(String password, String hash);
+  boolean verifyPassword(String password, String hash, String passwordSalt);
 }
 

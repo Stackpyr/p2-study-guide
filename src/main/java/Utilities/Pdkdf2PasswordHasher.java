@@ -37,8 +37,8 @@ public class Pdkdf2PasswordHasher implements PasswordHasher {
   }
 
   @Override
-  public boolean verifyPassword(String password, String hash) {
-    String hashedPassword = hashPassword(password, hash);
+  public boolean verifyPassword(String password, String hash, String salt) {
+    String hashedPassword = hashPassword(password, salt);
     return hashedPassword != null && hashedPassword.equals(hash);
   }
 }
