@@ -3,7 +3,7 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS account (
                                        account_id       INTEGER PRIMARY KEY AUTOINCREMENT,
                                        username         TEXT NOT NULL UNIQUE,
-                                       email            TEXT NOT NULL UNIQUE,
+                                       email            TEXT NOT NULL,
                                        password_hash    TEXT,
                                        password_salt    TEXT,
                                        display_name     TEXT,

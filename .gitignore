@@ -219,3 +219,4 @@ gradle-app.setting
 *.hprof
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,intellij+all,macos,maven,gradle,java
+/p2-study-guide.iml
