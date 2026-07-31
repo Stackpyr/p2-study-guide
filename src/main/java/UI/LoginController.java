@@ -6,10 +6,16 @@ import javafx.scene.control.Label;
 public class LoginController {
 
   @FXML
-  private Label welcomeText;
+  private Label messageText;
 
   @FXML
-  protected void onHelloButtonClick() {
-    welcomeText.setText("Welcome to JavaFX Application!");
+  protected void onLoginClick() {
+    messageText.setText("Error: Invalid username or password.");
   }
+
+  @FXML
+  protected void onRegisterClick() {
+    messageText.setText("Error: This is not yet supported.");
+  }
+
 }

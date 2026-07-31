@@ -5,9 +5,7 @@ module org.example.otterdobetter {
   requires java.desktop;
   requires static org.junit.jupiter.api;
 
-  opens org.example.otterdobetter to javafx.fxml;
-  opens Data to org.junit.platform.commons;
-  exports org.example.otterdobetter;
-  exports UI;
   opens UI to javafx.fxml;
+  opens Data to org.junit.platform.commons;
+  exports UI;
 }
