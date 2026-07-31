@@ -341,6 +341,12 @@
       <artifactId>sqlite-jdbc</artifactId>
       <version>3.50.3.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-fxml</artifactId>
+      <version>27-ea+25</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <build>

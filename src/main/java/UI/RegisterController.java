@@ -11,7 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
-public class LoginController extends BaseController {
+public class RegisterController extends BaseController {
 
   public Button login;
   public Button register;
@@ -34,13 +34,18 @@ public class LoginController extends BaseController {
   }
 
   @FXML
-  protected void onRegisterClick(MouseEvent event) {
-    FXMLLoader loader = new FXMLLoader(getClass().getResource("register-view.fxml"));
+  protected void onCreateAccountClick() {
+    errorText.setText("Error: This is not yet supported.");
+  }
+
+  @FXML
+  protected void onBackToLoginClick(MouseEvent event) {
+    FXMLLoader loader = new FXMLLoader(getClass().getResource("login-view.fxml"));
     Scene loginScene = null;
     try {
       loginScene = new Scene(loader.load());
     } catch (IOException e) {
-      System.out.println("Error loading register scene: " + e.getMessage());
+      System.out.println("Error loading login scene: " + e.getMessage());
     }
     stageOf(event).setScene(loginScene);
   }
