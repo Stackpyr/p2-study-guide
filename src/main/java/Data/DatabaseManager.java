@@ -8,6 +8,9 @@
  */
 package Data;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -72,7 +75,17 @@ public class DatabaseManager {
   private void createSchema() {
     // load file
     System.out.println("Creating schema...");
-    String createSchemaSql = getClass().getResource(DB_SCHEMA_SCRIPT).getFile();
+    String createSchemaSql;
+    try (InputStream is = getClass().getResourceAsStream(DB_SCHEMA_SCRIPT)) {
+      if (is == null) {
+        System.err.println("Could not find schema script: " + DB_SCHEMA_SCRIPT);
+        return;
+      }
+      createSchemaSql = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      System.err.println("Failed to read the database schema script: " + e.getMessage());
+      return;
+    }
     try (Statement createSchemaStmt = connection.createStatement()) {
       for (String sql : createSchemaSql.split(";")) {
         if (!sql.trim().isEmpty()) {
