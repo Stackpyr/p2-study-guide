@@ -1,5 +1,5 @@
 /**
- * [Explanation]
+ * This enum represents the result of an authentication attempt.
  *
  * @author: Jason Hamilton
  * @created: 7/31/2026

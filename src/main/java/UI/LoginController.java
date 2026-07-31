@@ -33,10 +33,10 @@ public class LoginController {
     AuthResult result = AuthService.getInstance().login(username.getText(), password.getText());
     if (result.getCode() == AuthResult.SUCCESS.getCode()) {
       errorText.setText("Login successful!");
+      //TODO: This needs to transition to the landing scene
     } else {
       errorText.setText("Login failed: " + result.getMessage());
     }
-
   }
 
   @FXML

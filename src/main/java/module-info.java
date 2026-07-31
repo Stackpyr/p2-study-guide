@@ -7,5 +7,6 @@ module org.example.otterdobetter {
 
   opens UI to javafx.fxml;
   opens Data to org.junit.platform.commons;
+  opens Service to org.junit.platform.commons;
   exports UI;
 }

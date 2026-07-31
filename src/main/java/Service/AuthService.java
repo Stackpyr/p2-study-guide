@@ -1,5 +1,6 @@
 /**
- * [Explanation]
+ * AuthService handles the authentication of users and session management. This is a singleton and can be used throughout the application
+ * to see who is logged in and if they are an admin.
  *
  * @author: Jason Hamilton
  * @created: 7/31/2026
@@ -18,12 +19,13 @@ public class AuthService {
 
   private static AuthService instance;
   private final AccountRepository accountRepository;
-  private final PasswordHasher passwordHasher;
   private Account currentAccount;
 
-  private AuthService(AccountRepository accountRepository, PasswordHasher passwordHasher) {
+  /**
+   * Private constructor for AuthService since this is a singleton class
+   */
+  private AuthService(AccountRepository accountRepository) {
     this.accountRepository = accountRepository;
-    this.passwordHasher = passwordHasher;
   }
 
   /**
@@ -32,7 +34,7 @@ public class AuthService {
    */
   public static AuthService getInstance() {
     if (instance == null) {
-      instance = new AuthService(new AccountRepository(), new Pdkdf2PasswordHasher());
+      instance = new AuthService(new AccountRepository());
     }
     return instance;
   }
@@ -44,6 +46,10 @@ public class AuthService {
    * @return AuthResult indicating success or failure
    */
   public AuthResult login(String username, String password) {
+    if (isLoggedIn()) {
+      logout(); // reset the current account
+    }
+
     if (username == null || username.isBlank()) {
       return AuthResult.USERNAME_BLANK;
     } else if (password == null || password.isBlank()) {
