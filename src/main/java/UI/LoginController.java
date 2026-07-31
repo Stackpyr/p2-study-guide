@@ -2,16 +2,15 @@ package UI;
 
 import Service.AuthResult;
 import Service.AuthService;
-import javafx.event.Event;
+import java.io.IOException;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
+import javafx.scene.paint.Color;
 
-public class LoginController {
+public class LoginController extends BaseController {
 
   public Button login;
   public Button register;
@@ -22,53 +21,29 @@ public class LoginController {
   @FXML
   private TextField password;
 
-  // tracks where inside the title bar the mouse was pressed, so dragging
-  // moves the window by the same offset instead of snapping its corner
-  // to the cursor
-  private double dragOffsetX;
-  private double dragOffsetY;
-
   @FXML
-  protected void onLoginClick() {
+  protected void onLoginClick(MouseEvent event) throws IOException {
     AuthResult result = AuthService.getInstance().login(username.getText(), password.getText());
     if (result.getCode() == AuthResult.SUCCESS.getCode()) {
-      errorText.setText("Login successful!");
-      //TODO: This needs to transition to the landing scene
+      swapScene(event, "dashboard-view.fxml");
     } else {
+      errorText.setTextFill(Color.RED);
       errorText.setText("Login failed: " + result.getMessage());
     }
   }
 
   @FXML
-  protected void onRegisterClick() {
-    errorText.setText("Error: This is not yet supported.");
+  protected void onRegisterClick(MouseEvent event) throws IOException {
+    swapScene(event, "register-view.fxml");
   }
 
-  @FXML
-  protected void onTitleBarPressed(MouseEvent event) {
-    dragOffsetX = event.getSceneX();
-    dragOffsetY = event.getSceneY();
-  }
-
-  @FXML
-  protected void onTitleBarDragged(MouseEvent event) {
-    Stage stage = stageOf(event);
-    stage.setX(event.getScreenX() - dragOffsetX);
-    stage.setY(event.getScreenY() - dragOffsetY);
-  }
-
-  @FXML
-  protected void onMinimizeClick(Event event) {
-    stageOf(event).setIconified(true);
-  }
-
-  @FXML
-  protected void onCloseClick(Event event) {
-    stageOf(event).close();
-  }
-
-  private Stage stageOf(Event event) {
-    return (Stage) ((Node) event.getSource()).getScene().getWindow();
+  /**
+   * Lets another controller (e.g. RegisterController, after a successful sign-up) show a
+   * message on this scene once it's loaded, instead of the default red error styling.
+   */
+  protected void showStatus(String message) {
+    errorText.setTextFill(Color.GREEN);
+    errorText.setText(message);
   }
 
 }
