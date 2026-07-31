@@ -383,6 +383,12 @@
         <version>0.0.8</version>
         <configuration>
           <mainClass>UI.OtterDoBetterApplication</mainClass>
+          <options>
+            <!-- javafx.graphics loads native libraries via System.load(),
+                 which the JVM flags as a restricted native-access call
+                 unless the module is explicitly granted permission. -->
+            <option>--enable-native-access=javafx.graphics</option>
+          </options>
         </configuration>
       </plugin>
     </plugins>

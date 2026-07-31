@@ -18,13 +18,13 @@ class AccountRepositoryTest {
 
   @Test
   void addAccount() {
-    AccountDao account = new AccountDao("testuser@test.com");
+    Account account = new Account("testuser@test.com");
     account.setPassword("testpassword");
     account.setDisplayName("Test User");
     account.setIsActive(true);
     account.setIsAdmin(false);
     AccountRepository repo = new AccountRepository();
-    AccountDao result = repo.addAccount(account);
+    Account result = repo.addAccount(account);
     assertNotNull(result);
     assertEquals(account.getUsername(), result.getUsername());
     assertEquals(account.getEmailAddress(), result.getEmailAddress());
