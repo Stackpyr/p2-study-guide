@@ -36,7 +36,7 @@ public class AccountRepository {
    * @param account AccountDao object to be added
    * @return AccountDao object with the newly added account's information
    */
-  public AccountDao AddAccount(AccountDao account) {
+  public AccountDao addAccount(AccountDao account) {
     try (PreparedStatement addStmt = conn.prepareStatement(INSERT_CMD,
         Statement.RETURN_GENERATED_KEYS)) {
       addStmt.setString(1, account.getUsername());

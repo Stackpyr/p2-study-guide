@@ -18,10 +18,26 @@ import java.sql.Statement;
 
 public class DatabaseManager {
 
-  private static final String DB_URL = "jdbc:sqlite:otterdobetter.sqlite";
+  private static final String FILE_DB_URL = "jdbc:sqlite:otterdobetter.sqlite";
+  // In memory database that is used only for testing (this should move to a config file at some point)
+  private static final String IN_MEMORY_DB_URL = "jdbc:sqlite::memory:";
+  private static final String DB_URL = resolveDbUrl();
   private static final String DB_SCHEMA_SCRIPT = "/create_database.sql";
   private static DatabaseManager instance; // singleton
   private static Connection connection;
+
+  /**
+   * Automatically determines if it should use an in memory database (for testing
+   * purposes) or a file database if we want to persist the data
+   */
+  private static String resolveDbUrl() {
+    try {
+      Class.forName("org.junit.jupiter.api.Test");
+      return IN_MEMORY_DB_URL;
+    } catch (ClassNotFoundException e) {
+      return FILE_DB_URL;
+    }
+  }
 
   /**
    * Private constructor to enforce a singleton pattern
@@ -41,6 +57,7 @@ public class DatabaseManager {
   }
 
   public static Connection getConnection() {
+    getInstance();
     return connection;
   }
 
@@ -58,7 +75,7 @@ public class DatabaseManager {
   /**
    * Closes a connection to the database
    */
-  public void close() {
+  public static void close() {
     try {
       if (connection != null && !connection.isClosed()) {
         connection.close();
@@ -72,11 +89,11 @@ public class DatabaseManager {
   /**
    * Creates the database schema
    */
-  private void createSchema() {
+  private static void createSchema() {
     // load file
     System.out.println("Creating schema...");
     String createSchemaSql;
-    try (InputStream is = getClass().getResourceAsStream(DB_SCHEMA_SCRIPT)) {
+    try (InputStream is = DatabaseManager.class.getResourceAsStream(DB_SCHEMA_SCRIPT)) {
       if (is == null) {
         System.err.println("Could not find schema script: " + DB_SCHEMA_SCRIPT);
         return;
