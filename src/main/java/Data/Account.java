@@ -12,7 +12,7 @@ import Utilities.PasswordHasher;
 import Utilities.Pdkdf2PasswordHasher;
 import java.util.Objects;
 
-public class AccountDao {
+public class Account {
   private int accountId;
   private String username;
   private String emailAddress;
@@ -33,7 +33,7 @@ public class AccountDao {
    * @param passwordHash hashed password of the user
    * @param passwordSalt salt used to hash the password
    */
-  AccountDao(int accountId, String username, String emailAddress, String displayName,
+  Account(int accountId, String username, String emailAddress, String displayName,
       boolean isActive, boolean isAdmin, String passwordHash, String passwordSalt) {
     this.accountId = accountId;
     this.username = username;
@@ -49,7 +49,7 @@ public class AccountDao {
    * Constructor for UserDao
    * @param emailAddress email address of the user
    */
-  public AccountDao(String emailAddress) {
+  public Account(String emailAddress) {
     this(emailAddress, null);
   }
 
@@ -58,7 +58,7 @@ public class AccountDao {
    * @param emailAddress email address of the user
    * @param username username of the user
    */
-  public AccountDao(String emailAddress, String username) {
+  public Account(String emailAddress, String username) {
     // validate email address
     if (validateEmailAddress(emailAddress)) {
       this.emailAddress = emailAddress;
@@ -118,7 +118,7 @@ public class AccountDao {
 
   @Override
   public boolean equals(Object o) {
-    if (!(o instanceof AccountDao userDao)) {
+    if (!(o instanceof Account userDao)) {
       return false;
     }
     return Objects.equals(getUsername(), userDao.getUsername());

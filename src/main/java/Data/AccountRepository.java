@@ -36,7 +36,7 @@ public class AccountRepository {
    * @param account AccountDao object to be added
    * @return AccountDao object with the newly added account's information
    */
-  public AccountDao addAccount(AccountDao account) {
+  public Account addAccount(Account account) {
     try (PreparedStatement addStmt = conn.prepareStatement(INSERT_CMD,
         Statement.RETURN_GENERATED_KEYS)) {
       addStmt.setString(1, account.getUsername());
@@ -66,7 +66,7 @@ public class AccountRepository {
    * @param accountId ID of the account to retrieve
    * @return AccountDao object with the account's information
    */
-  public AccountDao getById(int accountId) {
+  public Account getById(int accountId) {
     try (PreparedStatement selectStmt = conn.prepareStatement(GET_BY_ID_CMD)) {
       selectStmt.setInt(1, accountId);
 
@@ -85,7 +85,7 @@ public class AccountRepository {
    * @param username Username of the account to retrieve
    * @return AccountDao object with the account's information
    */
-  public AccountDao getByUsername(String username) {
+  public Account getByUsername(String username) {
     try (PreparedStatement selectStmt = conn.prepareStatement(GET_BY_USERNAME_CMD)) {
       selectStmt.setString(1, username);
 
@@ -154,10 +154,10 @@ public class AccountRepository {
    * @param rs ResultSet row to map
    * @return AccountDao object with the mapped data
    */
-  private AccountDao mapRow(ResultSet rs) {
+  private Account mapRow(ResultSet rs) {
     try {
       // map each column to a field in the AccountDao object
-      return new AccountDao(
+      return new Account(
           rs.getInt("account_id"),
           rs.getString("username"),
           rs.getString("email"),
