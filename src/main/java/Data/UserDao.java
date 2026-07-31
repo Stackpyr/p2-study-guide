@@ -1,0 +1,221 @@
+/**
+ * User data access object to allow for CRUD operations on users
+ *
+ * @author: Jason Hamilton
+ * @created: 7/30/2026
+ * @since: 0.1.0
+ */
+
+
+package Data;
+
+import Utilities.PasswordHasher;
+import Utilities.Pdkdf2PasswordHasher;
+import java.util.Objects;
+
+public class UserDao {
+  private int accountId;
+  private String username;
+  private String emailAddress;
+  private String passwordHash;
+  private String passwordSalt;
+  private String displayName;
+  private boolean isActive = true;
+  private boolean isAdmin = false;
+
+  /**
+   * Allows for hydration of a user object from a database row
+   * @param accountId
+   * @param username
+   * @param emailAddress
+   * @param displayName
+   * @param isActive
+   * @param isAdmin
+   * @param passwordHash
+   * @param passwordSalt
+   */
+  void UserDao(int accountId, String username, String emailAddress, String displayName,
+      boolean isActive, boolean isAdmin, String passwordHash, String passwordSalt) {
+    this.accountId = accountId;
+    this.username = username;
+    this.emailAddress = emailAddress;
+    this.displayName = displayName;
+    this.isActive = isActive;
+    this.isAdmin = isAdmin;
+    this.passwordHash = passwordHash;
+    this.passwordSalt = passwordSalt;
+  }
+
+  /**
+   * Constructor for UserDao
+   * @param emailAddress email address of the user
+   */
+  public UserDao(String emailAddress) {
+    this(emailAddress, null);
+  }
+
+  /**
+   * Constructor for UserDao
+   * @param emailAddress email address of the user
+   * @param username username of the user
+   */
+  public UserDao(String emailAddress, String username) {
+    // validate email address
+    if (validateEmailAddress(emailAddress)) {
+      this.emailAddress = emailAddress;
+      if (username == null) {
+        this.username = emailAddress;
+      }
+    } else {
+      System.out.println("Error: Invalid email address");
+    }
+  }
+
+  /**
+   * Validates the email address
+   * @param emailAddress email address to validate
+   * @return true if the email address is valid; false otherwise
+   */
+  private boolean validateEmailAddress(String emailAddress) {
+    if (emailAddress == null || emailAddress.isEmpty()) {
+      System.out.println("Error: Email address cannot be empty");
+    }
+    // not a proper validation of RFC 5322 for email address format, but this will do for now
+    return emailAddress.contains("@") && emailAddress.contains(".");
+  }
+
+  /**
+   * Gets the account ID for the user
+   * @return account ID
+  */
+  public int getAccountId() {
+    return accountId;
+  }
+
+  /**
+   * Gets the username for the user
+   * @return username
+  */
+  public String getUsername() {
+    return username;
+  }
+
+  /**
+   * Gets the email address for the user
+   * @return email address
+   */
+  public String getEmailAddress() {
+    return emailAddress;
+  }
+
+  @Override
+  public String toString() {
+    return "UserDao{" +
+        "(" + accountId + "):" +
+        " un='" + username + '\'' +
+        ", eml='" + emailAddress + '\'' +
+        '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof UserDao userDao)) {
+      return false;
+    }
+    return Objects.equals(getUsername(), userDao.getUsername());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(getUsername());
+  }
+
+  /**
+   * Sets the password for the user
+   * @param password password to set
+   */
+  public void setPassword(String password) {
+    if (password.isEmpty()) {
+      System.out.println("Error: Password cannot be empty");
+    } else {
+      PasswordHasher hasher = new Pdkdf2PasswordHasher();
+      this.passwordSalt = hasher.generateSalt();
+      this.passwordHash = hasher.hashPassword(password, this.passwordSalt);
+      System.out.println("Password successfully hashed");
+    }
+  }
+
+  /**
+   * Verifies the password against the stored hash
+   * @param password password to verify
+   * @return true if the password matches the stored hash; false otherwise
+   */
+  public boolean verifyPassword(String password) {
+    PasswordHasher hasher = new Pdkdf2PasswordHasher();
+    return hasher.verifyPassword(password, this.passwordHash);
+  }
+
+  /**
+   * Gets the password hash and salt for the user
+   * @return hash and salt
+  */
+  public String getDisplayName() {
+    return displayName;
+  }
+
+  /**
+   * Gets the display name for the user
+   * @param displayName display name
+   */
+  public void setDisplayName(String displayName) {
+    this.displayName = displayName;
+  }
+
+  /**
+   * Gets the password hash and salt for the user
+   * @return hash and salt
+  */
+  public String getPasswordHash() {
+    return passwordHash;
+  }
+
+  /**
+   * Gets the password salt for the user
+   * @return salt
+  */
+  public String getPasswordSalt() {
+    return passwordSalt;
+  }
+
+  /**
+   * Gets the active status of the user
+   * @return active status
+  */
+  public Boolean getIsActive() {
+    return isActive;
+  }
+
+  /**
+   * Sets the active status of the user
+   * @param active active status
+  */
+  public void setIsActive(Boolean active) {
+    isActive = active;
+  }
+
+  /**
+   * Gets the admin status of the user
+   * @return admin status
+  */
+  public Boolean getIsAdmin() {
+    return isAdmin;
+  }
+
+  /**
+   * Sets the admin status of the user
+   * @param admin admin status
+  */
+  public void setIsAdmin(Boolean admin) {
+    isAdmin = admin;
+  }
+}
