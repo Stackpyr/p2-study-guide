@@ -44,8 +44,9 @@ public class QuestionRepository {
             selectStmt.setInt(1, questionId);
 
             try (ResultSet resultSet = selectStmt.executeQuery()) {
-                resultSet.next(); // advance to the first row
-                return mapRow(resultSet);
+                if (resultSet.next()) {
+                    return mapRow(resultSet);
+                }
             }
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
@@ -66,17 +67,16 @@ public class QuestionRepository {
             addStmt.setString(5, question.getChoiceC());
             addStmt.setString(6, question.getChoiceD());
             addStmt.setString(7, question.getCorrectAnswer());
+
             addStmt.executeUpdate();
 
             try (ResultSet resultSet = addStmt.getGeneratedKeys()) {
-                if (!resultSet.next()) {
-                    System.out.println("Error: No such question ID");
-                } else {
-                    return question;
+                if (resultSet.next()) {
+                   int questionId = resultSet.getInt(1);
+                   return getQuestionById(questionId);
                 }
             }
-        }
-    } catch(SQLException e) {
+        } catch(SQLException e) {
         System.out.println("Error: " + e.getMessage());
     }
     return null;
@@ -84,9 +84,44 @@ public class QuestionRepository {
 
     /**
      * Update question
+     *
+     * @return question
      */
     public Question updateQuestion(Question question) {
-    return null;
+        try (PreparedStatement updateStmt = conn.prepareStatement(UPDATE_CMD)){
+            updateStmt.setString(1, question.getQuestionText());
+            updateStmt.setString(2, question.getChoiceA());
+            updateStmt.setString(3, question.getChoiceB());
+            updateStmt.setString(4, question.getChoiceC());
+            updateStmt.setString(5, question.getChoiceD());
+            updateStmt.setString(6, question.getCorrectAnswer());
+            updateStmt.setInt(7, question.getQuestionId());
+
+            updateStmt.executeUpdate();
+
+        } catch(SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return question;
+    }
+
+    /**
+     * Delete question
+     */
+    public boolean deleteQuestion(int questionId) {
+        try (PreparedStatement deleteStmt = conn.prepareStatement(DELETE_CMD)) {
+            deleteStmt.setInt(1, questionId);
+
+            int rowsAffected = deleteStmt.executeUpdate();
+          if (rowsAffected > 0) {
+              return true;
+          } else {
+              return false;
+          }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return false;
     }
 
 
