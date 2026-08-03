@@ -2,7 +2,7 @@
  * Responsible for CRUD operations on the question table and hydrating the Question object
  *
  * @author Analiza Boehning
- * @version 0.1.0
+ * @version 0.1.1
  * @since 7/31/2026
  */
 
@@ -17,17 +17,13 @@ import java.sql.Statement;
 
 public class QuestionRepository {
     private final Connection conn;
-    // receive one question by its primary key
     private final String GET_BY_QID_CMD = "SELECT * FROM question WHERE question_id = ?";
-    // Create
-    private final String INSERT_CMD = "INSERT INTO question (account_id, question_text, choice_a, choice_b, choice_c, choice_d, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    // Update
+    private final String INSERT_CMD = "INSERT INTO question (question_text, choice_a, choice_b, choice_c, choice_d, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private final String UPDATE_CMD = "UPDATE question SET question_text = ?, choice_a = ?, choice_b= ?, choice_c = ?, choice_d = ?, correct_answer = ? WHERE question_id = ?";
-    // Delete
     private final String DELETE_CMD = "DELETE FROM question WHERE question_id = ?";
 
     /**
-     * Constructor for QuestionRepository
+     * Creates a QuestionRepository and database connection
      */
     public QuestionRepository() {
         conn = DatabaseManager.getConnection();
@@ -55,18 +51,19 @@ public class QuestionRepository {
     }
 
     /**
-     * Add Question
+     * Add Question to the database
+     * @param question Question to be added
+     * @return true if the question has been added - otherwise return false.
      */
     public Question addQuestion(Question question) {
         try (PreparedStatement addStmt = conn.prepareStatement(INSERT_CMD,
                 Statement.RETURN_GENERATED_KEYS)) {
-            addStmt.setInt(1, question.getAccountId());
-            addStmt.setString(2, question.getQuestionText());
-            addStmt.setString(3, question.getChoiceA());
-            addStmt.setString(4, question.getChoiceB());
-            addStmt.setString(5, question.getChoiceC());
-            addStmt.setString(6, question.getChoiceD());
-            addStmt.setString(7, question.getCorrectAnswer());
+            addStmt.setString(1, question.getQuestionText());
+            addStmt.setString(2, question.getChoiceA());
+            addStmt.setString(3, question.getChoiceB());
+            addStmt.setString(4, question.getChoiceC());
+            addStmt.setString(5, question.getChoiceD());
+            addStmt.setString(6, question.getCorrectAnswer());
 
             addStmt.executeUpdate();
 
@@ -83,9 +80,10 @@ public class QuestionRepository {
 }
 
     /**
-     * Update question
+     * Update an existing question
      *
-     * @return question
+     * @param question Question object that contains the update
+     * @return true if the question has been updated - otherwise return false.
      */
     public Question updateQuestion(Question question) {
         try (PreparedStatement updateStmt = conn.prepareStatement(UPDATE_CMD)){
@@ -106,18 +104,17 @@ public class QuestionRepository {
     }
 
     /**
-     * Delete question
+     * Delete a question from the database
+     *
+     * @param questionId the ID of the question to be deleted
+     * @return true if the question was deleted - otherwise false
      */
     public boolean deleteQuestion(int questionId) {
         try (PreparedStatement deleteStmt = conn.prepareStatement(DELETE_CMD)) {
             deleteStmt.setInt(1, questionId);
-
             int rowsAffected = deleteStmt.executeUpdate();
-          if (rowsAffected > 0) {
-              return true;
-          } else {
-              return false;
-          }
+            return rowsAffected > 0;
+
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -133,7 +130,6 @@ public class QuestionRepository {
     private Question mapRow(ResultSet resultSet) {
         try {
             return new Question(
-                    resultSet.getInt("account_id"),
                     resultSet.getInt("question_id"),
                     resultSet.getString("question_text"),
                     resultSet.getString("choice_a"),
