@@ -19,7 +19,6 @@ CREATE INDEX IF NOT EXISTS idx_account_email ON account (email);
 
 CREATE TABLE IF NOT EXISTS question (
                                         question_id    INTEGER PRIMARY KEY AUTOINCREMENT,
-                                        account_id     INTEGER REFERENCES account (account_id) ON DELETE SET NULL ON UPDATE CASCADE,
                                         question_text  TEXT NOT NULL,
                                         choice_a       TEXT NOT NULL,
                                         choice_b       TEXT NOT NULL,
@@ -29,8 +28,6 @@ CREATE TABLE IF NOT EXISTS question (
                                         created_at     TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
                                         updated_at     TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP)
 );
-
-CREATE INDEX IF NOT EXISTS idx_question_account_id ON question (account_id);
 
 CREATE TABLE IF NOT EXISTS quiz_attempt (
                                             attempt_id      INTEGER PRIMARY KEY AUTOINCREMENT,
