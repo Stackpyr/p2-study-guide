@@ -18,7 +18,7 @@ import java.sql.Statement;
 public class QuestionRepository {
     private final Connection conn;
     private final String GET_BY_QID_CMD = "SELECT * FROM question WHERE question_id = ?";
-    private final String INSERT_CMD = "INSERT INTO question (question_text, choice_a, choice_b, choice_c, choice_d, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private final String INSERT_CMD = "INSERT INTO question (question_text, choice_a, choice_b, choice_c, choice_d, correct_answer) VALUES (?, ?, ?, ?, ?, ?)";
     private final String UPDATE_CMD = "UPDATE question SET question_text = ?, choice_a = ?, choice_b= ?, choice_c = ?, choice_d = ?, correct_answer = ? WHERE question_id = ?";
     private final String DELETE_CMD = "DELETE FROM question WHERE question_id = ?";
 
@@ -31,9 +31,8 @@ public class QuestionRepository {
 
     /**
      * Retrieves a question by ID
-     *
      * @param questionId ID of the question
-     * @return Question object and question information
+     * @return Question object and question information - otherwise null if no question is found
      */
     public Question getQuestionById(int questionId) {
         try (PreparedStatement selectStmt = conn.prepareStatement(GET_BY_QID_CMD)) {
@@ -53,7 +52,7 @@ public class QuestionRepository {
     /**
      * Add Question to the database
      * @param question Question to be added
-     * @return true if the question has been added - otherwise return false.
+     * @return added question - otherwise null
      */
     public Question addQuestion(Question question) {
         try (PreparedStatement addStmt = conn.prepareStatement(INSERT_CMD,
@@ -81,9 +80,8 @@ public class QuestionRepository {
 
     /**
      * Update an existing question
-     *
      * @param question Question object that contains the update
-     * @return true if the question has been updated - otherwise return false.
+     * @return updated Question object
      */
     public Question updateQuestion(Question question) {
         try (PreparedStatement updateStmt = conn.prepareStatement(UPDATE_CMD)){
@@ -105,7 +103,6 @@ public class QuestionRepository {
 
     /**
      * Delete a question from the database
-     *
      * @param questionId the ID of the question to be deleted
      * @return true if the question was deleted - otherwise false
      */
@@ -125,7 +122,7 @@ public class QuestionRepository {
     /**
      * Maps a ResultSet row to a Question Object
      * @param resultSet result set row to map
-     * @return Question Object and mapped data
+     * @return Question object and mapped data
      */
     private Question mapRow(ResultSet resultSet) {
         try {

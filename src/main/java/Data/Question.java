@@ -11,7 +11,6 @@ package Data;
 import java.util.Objects;
 
 public class Question {
-    // fields
     private int questionId;
     private String questionText;
     private String choiceA;
