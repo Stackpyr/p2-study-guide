@@ -12,7 +12,7 @@ public class OtterDoBetterApplication extends Application {
 
   @Override
   public void start(Stage stage) throws IOException {
-    FXMLLoader fxmlLoader = new FXMLLoader(OtterDoBetterApplication.class.getResource("login-view.fxml"));
+    FXMLLoader fxmlLoader = new FXMLLoader(OtterDoBetterApplication.class.getResource("add-question-view.fxml"));
     Scene scene = new Scene(fxmlLoader.load());
     // swapping out for a custom title bar
     stage.initStyle(StageStyle.UNDECORATED);
