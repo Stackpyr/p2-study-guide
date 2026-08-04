@@ -19,7 +19,7 @@ CST 338 Project 2 — Team **Team 1**.
 ## Team & Slice Ownership
 | Slice | Owner | GitHub username | Issues | Branch(es) | PR(s) | Enhancement chosen               | Status      |
 |-------|-------|-----------------|--------|------------|-------|----------------------------------|-------------|
-| 1 — Accounts | Jason Hamilton | Stackpyr | | | | ScribeJava for Social OAUTH      | In-Progress |
+| 1 — Accounts | Jason Hamilton | Stackpyr | #3 #4 #5| jason/user-login, jason/register-account | #12 #13 #14 | ScribeJava for Social OAUTH      | In-Progress |
 | 2 — Question Bank | Analiza Boehning | aboehning-cs | | | | Advanced Query (Search & Filter) | Planned     |
 | 3 — Quiz Engine | Sawyer Phillips | sawyerphillips | | | | Alerts and Notifications | Planned     |
 
@@ -35,7 +35,7 @@ Issue if the team later decides to attempt it for extra credit._
 ## Code Review Log
 | PR | Author | Human reviewer(s) | AI review (link) | Outcome |
 |----|--------|-------------------|------------------|---------|
-| | | | | |
+| #6 | Analiza Boehning | Jason Hamilton | | Merged |
 
 ## AI Usage Log
 - **AI-drafted tests:** <link to TESTING.md / commit> — per owner.
