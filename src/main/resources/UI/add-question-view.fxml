@@ -90,11 +90,9 @@
                 </HBox>
 
             <HBox alignment="CENTER" spacing="40">
-                <Button text="Save" >
-
+                <Button fx:id="Save" text="Save" >
                 </Button>
-                <Button text="Cancel">
-
+                <Button fx:id="Cancel" text="Cancel">
                 </Button>
             </HBox>
         </VBox>
