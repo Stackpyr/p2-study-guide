@@ -33,17 +33,18 @@ Issue if the team later decides to attempt it for extra credit._
 - Slide 5 - Study Mode & Tagging: not building (team size).
 
 ## Code Review Log
-| PR | Author | Human reviewer(s) | AI review (link) | Outcome |
-|----|--------|-------------------|------------------|---------|
-| [#12](https://github.com/Stackpyr/p2-study-guide/pull/12) | Jason Hamilton | Analiza Boehning, Sawyer Phillips | — | Merged |
-| [#13](https://github.com/Stackpyr/p2-study-guide/pull/13) | Jason Hamilton | Sawyer Phillips, Analiza Boehning | — | Merged |
-| [#14](https://github.com/Stackpyr/p2-study-guide/pull/14) | Jason Hamilton | Analiza Boehning, Sawyer Phillips | — | Merged |
-| [#15](https://github.com/Stackpyr/p2-study-guide/pull/15) | Analiza Boehning | Jason Hamilton, Sawyer Phillips | — | Merged |
-| [#16](https://github.com/Stackpyr/p2-study-guide/pull/16) | Jason Hamilton | Sawyer Phillips, Analiza Boehning | — | Merged |
-| [#17](https://github.com/Stackpyr/p2-study-guide/pull/17) | Sawyer Phillips | Analiza Boehning | — | Open (1/2 approvals) |
-| [#18](https://github.com/Stackpyr/p2-study-guide/pull/18) | Sawyer Phillips | — | — | Open (awaiting review) |
-| [#19](https://github.com/Stackpyr/p2-study-guide/pull/19) | Sawyer Phillips | — | — | Open (awaiting review) |
-| [#20](https://github.com/Stackpyr/p2-study-guide/pull/20) | Analiza Boehning | — | — | Open (awaiting review) |
+| PR | Author | Human reviewer(s)                 | AI review (link) | Outcome                |
+|----|--------|-----------------------------------|------------------|------------------------|
+| [#12](https://github.com/Stackpyr/p2-study-guide/pull/12) | Jason Hamilton | Analiza Boehning, Sawyer Phillips | — | Merged                 |
+| [#13](https://github.com/Stackpyr/p2-study-guide/pull/13) | Jason Hamilton | Sawyer Phillips, Analiza Boehning | — | Merged                 |
+| [#14](https://github.com/Stackpyr/p2-study-guide/pull/14) | Jason Hamilton | Analiza Boehning, Sawyer Phillips | — | Merged                 |
+| [#15](https://github.com/Stackpyr/p2-study-guide/pull/15) | Analiza Boehning | Jason Hamilton, Sawyer Phillips   | — | Merged                 |
+| [#16](https://github.com/Stackpyr/p2-study-guide/pull/16) | Jason Hamilton | Sawyer Phillips, Analiza Boehning | — | Merged                 |
+| [#17](https://github.com/Stackpyr/p2-study-guide/pull/17) | Sawyer Phillips | Jason Hamilton, Analiza Boehning  | — | Merged                 |
+| [#18](https://github.com/Stackpyr/p2-study-guide/pull/18) | Sawyer Phillips | Jason Hamilton, Analiza Boehning  | — | Merged |
+| [#19](https://github.com/Stackpyr/p2-study-guide/pull/19) | Sawyer Phillips | Jason Hamilton, Analiza Boehning  | — | Merged |
+| [#20](https://github.com/Stackpyr/p2-study-guide/pull/20) | Analiza Boehning | Jason Hamilton, Sawyer Phillips   | — | Merged |
+| #6 | Analiza Boehning | Jason Hamilton                    | | Merged                 |
 
 ## AI Usage Log
 - **AI-drafted tests:** [TESTING.md](TESTING.md) — per Jason Hamilton (Slice 1: Accounts). Covers `Account`, `AccountRepository`, `AuthService`, and `DatabaseManager` unit tests; AI-authored methods are tagged `LLM GENERATED` in each test file.
@@ -56,7 +57,7 @@ Issue if the team later decides to attempt it for extra credit._
 
 ## Build & Run
 ```
-./mvnw.cmd javafx:run        # launch the app
-./mvnw.cmd test              # run the test suite
+./gradlew run        # launch the app
+./gradlew test       # run the test suite
 ```
-Requirements: JDK 21.0.12 (min), JavaFX 21.0.12 (min).
+Requirements: JDK <version>, JavaFX <version>. Any setup notes go here.
