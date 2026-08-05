@@ -39,6 +39,7 @@
             <Font size="24.0" />
           </font>
         </Text>
+        <Button onMouseClicked="#onQuizClick" text="Start Quiz" />
         <Button fx:id="logout" mnemonicParsing="false" onMouseClicked="#onLogoutClick" text="Log Out" />
       </children>
     </VBox>
