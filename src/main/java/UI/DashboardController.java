@@ -22,4 +22,9 @@ public class DashboardController extends BaseController {
     swapScene(event, "login-view.fxml");
   }
 
+  @FXML
+  protected void onQuizClick(MouseEvent event) {
+    swapScene(event, "quiz-view.fxml");
+  }
+
 }
