@@ -20,7 +20,7 @@ CST 338 Project 2 — Team **Team 1**.
 | Slice | Owner | GitHub username | Issues     | Branch(es)                                                                    | PR(s)    | Enhancement chosen               | Status      |
 |-------|-------|-----------------|------------|-------------------------------------------------------------------------------|----------|----------------------------------|-------------|
 | 1 — Accounts | Jason Hamilton | Stackpyr |            |                                                                               |          | ScribeJava for Social OAUTH      | In-Progress |
-| 2 — Question Bank | Analiza Boehning | aboehning-cs | #6, #7, #8 | analiza/question-bank, analiza/question-bank-scene, analiza/question-database | #15, #20 | Advanced Query (Search & Filter) | Planned     |
+| 2 — Question Bank | Analiza Boehning | aboehning-cs | #6, #7, #8 | analiza/question-bank, analiza/question-bank-scene, analiza/question-database | #15, #20 | Advanced Query (Search & Filter) | In-Progress |
 | 3 — Quiz Engine | Sawyer Phillips | sawyerphillips |            |                                                                               |          | Alerts and Notifications | Planned     |
 
 _Status values: planned · in-progress · complete_
