@@ -35,11 +35,19 @@ Issue if the team later decides to attempt it for extra credit._
 ## Code Review Log
 | PR | Author | Human reviewer(s) | AI review (link) | Outcome |
 |----|--------|-------------------|------------------|---------|
-| | | | | |
+| [#12](https://github.com/Stackpyr/p2-study-guide/pull/12) | Jason Hamilton | Analiza Boehning, Sawyer Phillips | — | Merged |
+| [#13](https://github.com/Stackpyr/p2-study-guide/pull/13) | Jason Hamilton | Sawyer Phillips, Analiza Boehning | — | Merged |
+| [#14](https://github.com/Stackpyr/p2-study-guide/pull/14) | Jason Hamilton | Analiza Boehning, Sawyer Phillips | — | Merged |
+| [#15](https://github.com/Stackpyr/p2-study-guide/pull/15) | Analiza Boehning | Jason Hamilton, Sawyer Phillips | — | Merged |
+| [#16](https://github.com/Stackpyr/p2-study-guide/pull/16) | Jason Hamilton | Sawyer Phillips, Analiza Boehning | — | Merged |
+| [#17](https://github.com/Stackpyr/p2-study-guide/pull/17) | Sawyer Phillips | Analiza Boehning | — | Open (1/2 approvals) |
+| [#18](https://github.com/Stackpyr/p2-study-guide/pull/18) | Sawyer Phillips | — | — | Open (awaiting review) |
+| [#19](https://github.com/Stackpyr/p2-study-guide/pull/19) | Sawyer Phillips | — | — | Open (awaiting review) |
+| [#20](https://github.com/Stackpyr/p2-study-guide/pull/20) | Analiza Boehning | — | — | Open (awaiting review) |
 
 ## AI Usage Log
-- **AI-drafted tests:** <link to TESTING.md / commit> — per owner.
-- **AI code reviews:** <PR link + adjudication note> — per owner.
+- **AI-drafted tests:** [TESTING.md](TESTING.md) — per Jason Hamilton (Slice 1: Accounts). Covers `Account`, `AccountRepository`, `AuthService`, and `DatabaseManager` unit tests; AI-authored methods are tagged `LLM GENERATED` in each test file.
+- **AI code reviews:** None yet — no PR has gone through an AI-assisted review this cycle.
 
 ## Extra Credit Log
 | Item | Who | Evidence (Issue/PR) |
@@ -48,7 +56,7 @@ Issue if the team later decides to attempt it for extra credit._
 
 ## Build & Run
 ```
-./gradlew run        # launch the app
-./gradlew test       # run the test suite
+./mvnw.cmd javafx:run        # launch the app
+./mvnw.cmd test              # run the test suite
 ```
-Requirements: JDK <version>, JavaFX <version>. Any setup notes go here.
+Requirements: JDK 21.0.12 (min), JavaFX 21.0.12 (min).

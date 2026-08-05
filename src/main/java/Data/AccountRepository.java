@@ -72,8 +72,10 @@ public class AccountRepository {
       selectStmt.setInt(1, accountId);
 
       try (ResultSet rs = selectStmt.executeQuery()) {
-        rs.next(); // advance to the first row
-        return mapRow(rs); // map the row to an AccountDao object
+        if (rs.next()) { // advance to the first row
+          return mapRow(rs); // map the row to an AccountDao object
+        }
+        return null;
       }
     } catch (SQLException e) {
       System.out.println("Error: " + e.getMessage());
@@ -91,8 +93,10 @@ public class AccountRepository {
       selectStmt.setString(1, username);
 
       try (ResultSet rs = selectStmt.executeQuery()) {
-        rs.next(); // advance to the first row
-        return mapRow(rs); // map the row to an AccountDao object
+        if (rs.next()) { // advance to the first row
+          return mapRow(rs); // map the row to an AccountDao object
+        }
+        return null;
       }
     } catch (SQLException e) {
       System.out.println("Error: " + e.getMessage());
