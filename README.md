@@ -17,11 +17,11 @@ Study Guide is a JavaFX application that allows users to create an account, navi
 CST 338 Project 2 — Team **Team 1**.
 
 ## Team & Slice Ownership
-| Slice | Owner | GitHub username | Issues | Branch(es) | PR(s) | Enhancement chosen               | Status      |
-|-------|-------|-----------------|--------|------------|-------|----------------------------------|-------------|
-| 1 — Accounts | Jason Hamilton | Stackpyr | | | | ScribeJava for Social OAUTH      | In-Progress |
-| 2 — Question Bank | Analiza Boehning | aboehning-cs | | | | Advanced Query (Search & Filter) | Planned     |
-| 3 — Quiz Engine | Sawyer Phillips | sawyerphillips | | | | Alerts and Notifications | Planned     |
+| Slice | Owner | GitHub username | Issues     | Branch(es)                                                                    | PR(s)    | Enhancement chosen               | Status      |
+|-------|-------|-----------------|------------|-------------------------------------------------------------------------------|----------|----------------------------------|-------------|
+| 1 — Accounts | Jason Hamilton | Stackpyr |            |                                                                               |          | ScribeJava for Social OAUTH      | In-Progress |
+| 2 — Question Bank | Analiza Boehning | aboehning-cs | #6, #7, #8 | analiza/question-bank, analiza/question-bank-scene, analiza/question-database | #15, #20 | Advanced Query (Search & Filter) | Planned     |
+| 3 — Quiz Engine | Sawyer Phillips | sawyerphillips |            |                                                                               |          | Alerts and Notifications | Planned     |
 
 _Status values: planned · in-progress · complete_
 
