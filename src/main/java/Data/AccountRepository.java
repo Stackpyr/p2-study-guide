@@ -23,6 +23,7 @@ public class AccountRepository {
   private final String UPDATE_PWD_CMD = "UPDATE account SET password_hash = ?, password_salt = ?, updated_at = CURRENT_TIMESTAMP WHERE account_id = ?";
   private final String UPDATE_ACTIVE_CMD = "UPDATE account SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE account_id = ?";
   private final String UPDATE_ADMIN_CMD = "UPDATE account SET is_admin = ?, updated_at = CURRENT_TIMESTAMP WHERE account_id = ?";
+  private final String DELETE_ACCOUNT_CMD = "DELETE FROM account WHERE account_id = ?";
 
   /**
    * Constructor for AccountRepository
@@ -146,6 +147,26 @@ public class AccountRepository {
       stmt.executeUpdate();
     } catch (SQLException e) {
       System.out.println("Error: " + e.getMessage());
+    }
+  }
+
+  /**
+   * Deletes an account. If the account cannot be deleted due to a referential integrity constraint,
+   * the account will instead be marked as inactive.
+   * @param accountId ID of the account to delete
+   */
+  public void deleteAccount(int accountId) {
+    try (PreparedStatement stmt = conn.prepareStatement(DELETE_ACCOUNT_CMD)) {
+      stmt.setInt(1, accountId);
+      // delete the account
+      stmt.executeUpdate();
+    } catch (SQLException e) {
+      if (e.getMessage().contains("FOREIGN KEY constraint failed")) {
+        // Mark the account as inactive instead of deleting it
+        updateStatus(accountId, false);
+      } else {
+        System.out.println("Error: " + e.getMessage());
+      }
     }
   }
 
