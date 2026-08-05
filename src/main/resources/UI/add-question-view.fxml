@@ -90,9 +90,9 @@
                 </HBox>
 
             <HBox alignment="CENTER" spacing="40">
-                <Button fx:id="Save" text="Save" >
+                <Button fx:id="Save" text="Save"  onAction="#onSaveClick">
                 </Button>
-                <Button fx:id="Cancel" text="Cancel">
+                <Button fx:id="Cancel" text="Cancel" onAction="#onCancelClick">
                 </Button>
             </HBox>
         </VBox>

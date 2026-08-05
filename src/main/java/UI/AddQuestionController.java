@@ -77,11 +77,11 @@ public class AddQuestionController {
             return;
         }
 
-        // Check if a category has been selected
-        if (categoryChoiceBox.getValue() == null) {
-            System.out.println("Please select category");
-            return;
-        }
+        // TODO: Category needs to be implemented in Question model and DB for this check.
+//        if (categoryChoiceBox.getValue() == null) {
+//            System.out.println("Please select category");
+//            return;
+//        }
 
         String A = choiceA.getText();
         String B = choiceB.getText();
@@ -103,12 +103,13 @@ public class AddQuestionController {
 
         QuestionRepository questionRepository = new QuestionRepository();
 
-        Question newQuestion = new Question(
-                // fix Question.java first.
-        );
+        Question newQuestion = new Question(questionTextArea.getText());
 
-
-
+        newQuestion.setChoiceA(choiceA.getText());
+        newQuestion.setChoiceB(choiceB.getText());
+        newQuestion.setChoiceC(choiceC.getText());
+        newQuestion.setChoiceD(choiceD.getText());
+        newQuestion.setCorrectAnswer(correctAnswer);
 
         questionRepository.addQuestion(newQuestion);
         System.out.printf("Added question: %s", newQuestion);
