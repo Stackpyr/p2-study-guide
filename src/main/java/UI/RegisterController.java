@@ -1,8 +1,15 @@
+/**
+ * This class handles the registration of a new user.
+ *
+ * @author: Jason Hamilton
+ * @created: 7/31/2026
+ * @since: 0.1.0
+ */
+
 package UI;
 
 import Data.Account;
 import Data.AccountRepository;
-import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -24,7 +31,7 @@ public class RegisterController extends BaseController {
   private TextField confirmPassword;
 
   @FXML
-  protected void onCreateAccountClick(MouseEvent event) throws IOException {
+  protected void onCreateAccountClick(MouseEvent event) {
     // This should all go into a service on its own, but doing this for simplicity
     if (displayName == null || displayName.getText().isEmpty() ||
         username == null || username.getText().isEmpty() ||
@@ -55,7 +62,7 @@ public class RegisterController extends BaseController {
 
     AccountRepository repo = new AccountRepository();
     // check to see if the username is already taken
-    if (repo.getByUsername(username.getText()).getAccountId() > 0) {
+    if (repo.getByUsername(username.getText()) != null) {
       errorText.setText("Error: Username already exists. Try again");
       return;
     }
@@ -66,13 +73,12 @@ public class RegisterController extends BaseController {
       return;
     }
 
-    LoginController loginController = swapScene(event, "login-view.fxml");
-    loginController.showStatus("Account created! Please log in.");
+    swapScene(event, SceneType.LOGIN);
   }
 
   @FXML
-  protected void onBackToLoginClick(MouseEvent event) throws IOException {
-    swapScene(event, "login-view.fxml");
+  protected void onBackToLoginClick(MouseEvent event) {
+    swapScene(event, SceneType.LOGIN);
   }
 
 }

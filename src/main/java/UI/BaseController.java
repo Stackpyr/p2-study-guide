@@ -1,26 +1,4 @@
 /**
- * [Explanation]
- *
- * @author: Jason Hamilton
- * @created: 7/31/2026
- * @since: 0.1.0
- */
-
-
-package UI;
-
-import Service.AuthService;
-import java.io.IOException;
-import javafx.event.Event;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
-
-/**
  * This base controller class provides common functionality for all controllers, including the
  * management of the custom title bar (since I don't care for the standard Windows one - don't know about Mac)
  *
@@ -28,6 +6,17 @@ import javafx.stage.Stage;
  * @created: 7/31/2026
  * @since: 0.1.0
  */
+
+package UI;
+
+import Service.AuthService;
+import javafx.event.Event;
+import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 public class BaseController {
   // tracks where inside the title bar the mouse was pressed
@@ -63,27 +52,29 @@ public class BaseController {
   }
 
   /**
-   * Loads another FXML scene onto the current stage and returns its controller, so the caller
-   * can pass data into the new scene (e.g. a status message) before the user sees it.
+   * Loads the given scene onto the current stage.
+   * @param event the event that triggered this
+   * @param type the type of scene to load
    */
-  protected <T> T swapScene(Event event, String fxml) {
-    FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
-    Scene scene = null;
-    try {
-      scene = new Scene(loader.load());
-    } catch (IOException e) {
-      System.out.println("Error loading FXML: " + e.getMessage());
-    }
+  protected void swapScene(Event event, SceneType type) {
+    Scene scene = SceneFactory.load(type);
     stageOf(event).setScene(scene);
-    return loader.getController();
   }
 
+  /**
+   * Handles the mouse press event on the title bar to initiate dragging of the window.
+   * @param event the mouse press event
+   */
   @FXML
   protected void onTitleBarPressed(MouseEvent event) {
     dragOffsetX = event.getSceneX();
     dragOffsetY = event.getSceneY();
   }
 
+  /**
+   * Handles the mouse drag event on the title bar to move the window.
+   * @param event the mouse drag event
+   */
   @FXML
   protected void onTitleBarDragged(MouseEvent event) {
     Stage stage = stageOf(event);
@@ -91,16 +82,29 @@ public class BaseController {
     stage.setY(event.getScreenY() - dragOffsetY);
   }
 
+  /**
+   * Handles the minimize button click event to minimize the window.
+   * @param event the button click event
+   */
   @FXML
   protected void onMinimizeClick(Event event) {
     stageOf(event).setIconified(true);
   }
 
+  /**
+   * Handles the close button click event to close the window.
+   * @param event the button click event
+   */
   @FXML
   protected void onCloseClick(Event event) {
     stageOf(event).close();
   }
 
+  /**
+   * Retrieves the Stage (window) associated with the given event.
+   * @param event the event from which to retrieve the stage
+   * @return the Stage associated with the event
+   */
   protected Stage stageOf(Event event) {
     return (Stage) ((Node) event.getSource()).getScene().getWindow();
   }

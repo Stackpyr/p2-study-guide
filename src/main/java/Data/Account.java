@@ -121,12 +121,13 @@ public class Account {
     if (!(o instanceof Account userDao)) {
       return false;
     }
-    return Objects.equals(getUsername(), userDao.getUsername());
+    return Objects.equals(getUsername(), userDao.getUsername()) &&
+        Objects.equals(getAccountId(), userDao.getAccountId());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(getUsername());
+    return Objects.hashCode(getUsername()) + Objects.hashCode(getAccountId());
   }
 
   /**
