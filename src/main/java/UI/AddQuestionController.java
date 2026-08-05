@@ -18,7 +18,7 @@ import javafx.scene.control.ToggleGroup;
  * @version 0.1.0
  * @since 8/3/2026
  */
-public class AddQuestionController {
+public class AddQuestionController extends BaseController {
     // Question text area
     @FXML
     private TextArea questionTextArea;
@@ -113,6 +113,8 @@ public class AddQuestionController {
 
         questionRepository.addQuestion(newQuestion);
         System.out.printf("Added question: %s", newQuestion);
+
+        // TODO: After saving, the scene should swap back to the Question bank scene.
     }
 
     @FXML
