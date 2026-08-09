@@ -65,4 +65,9 @@ public class DashboardController extends BaseController {
     swapScene(event, SceneType.LOGIN);
   }
 
+  @FXML
+  protected void onQuizClick(MouseEvent event) {
+    swapScene(event, SceneType.QUIZ);
+  }
+
 }
