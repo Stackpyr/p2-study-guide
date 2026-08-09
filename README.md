@@ -19,7 +19,7 @@ CST 338 Project 2 — Team **Team 1**.
 ## Team & Slice Ownership
 | Slice | Owner | GitHub username | Issues | Branch(es) | PR(s) | Enhancement chosen               | Status      |
 |-------|-------|-----------------|--------|------------|-------|----------------------------------|-------------|
-| 1 — Accounts | Jason Hamilton | Stackpyr | #3 #4 #5| jason/user-login, jason/register-account | #12 #13 #14 | ScribeJava for Social OAUTH      | In-Progress |
+| 1 — Accounts | Jason Hamilton | Stackpyr | | | | ScribeJava for Social OAUTH      | In-Progress |
 | 2 — Question Bank | Analiza Boehning | aboehning-cs |#6, #7, #8 |analiza/question-bank, analiza/question-bank-scene, analiza/question-database |#15, #20 | Advanced Query (Search & Filter) | In-Progress  |
 | 3 — Quiz Engine | Sawyer Phillips | sawyerphillips | #9 #10 #11 | sawyer/quiz-scene, sawyer/quiz-attempt-data |  | Alerts and Notifications | Planned     |
 
@@ -33,13 +33,22 @@ Issue if the team later decides to attempt it for extra credit._
 - Slide 5 - Study Mode & Tagging: not building (team size).
 
 ## Code Review Log
-| PR | Author | Human reviewer(s) | AI review (link) | Outcome |
-|----|--------|-------------------|------------------|---------|
-| #6 | Analiza Boehning | Jason Hamilton | | Merged |
+| PR | Author | Human reviewer(s)                 | AI review (link) | Outcome                |
+|----|--------|-----------------------------------|------------------|------------------------|
+| [#12](https://github.com/Stackpyr/p2-study-guide/pull/12) | Jason Hamilton | Analiza Boehning, Sawyer Phillips | — | Merged                 |
+| [#13](https://github.com/Stackpyr/p2-study-guide/pull/13) | Jason Hamilton | Sawyer Phillips, Analiza Boehning | — | Merged                 |
+| [#14](https://github.com/Stackpyr/p2-study-guide/pull/14) | Jason Hamilton | Analiza Boehning, Sawyer Phillips | — | Merged                 |
+| [#15](https://github.com/Stackpyr/p2-study-guide/pull/15) | Analiza Boehning | Jason Hamilton, Sawyer Phillips   | — | Merged                 |
+| [#16](https://github.com/Stackpyr/p2-study-guide/pull/16) | Jason Hamilton | Sawyer Phillips, Analiza Boehning | — | Merged                 |
+| [#17](https://github.com/Stackpyr/p2-study-guide/pull/17) | Sawyer Phillips | Jason Hamilton, Analiza Boehning  | — | Merged                 |
+| [#18](https://github.com/Stackpyr/p2-study-guide/pull/18) | Sawyer Phillips | Jason Hamilton, Analiza Boehning  | — | Merged |
+| [#19](https://github.com/Stackpyr/p2-study-guide/pull/19) | Sawyer Phillips | Jason Hamilton, Analiza Boehning  | — | Merged |
+| [#20](https://github.com/Stackpyr/p2-study-guide/pull/20) | Analiza Boehning | Jason Hamilton, Sawyer Phillips   | — | Merged |
+| #6 | Analiza Boehning | Jason Hamilton                    | | Merged                 |
 
 ## AI Usage Log
-- **AI-drafted tests:** <link to TESTING.md / commit> — per owner.
-- **AI code reviews:** <PR link + adjudication note> — per owner.
+- **AI-drafted tests:** [TESTING.md](TESTING.md) — per Jason Hamilton (Slice 1: Accounts). Covers `Account`, `AccountRepository`, `AuthService`, and `DatabaseManager` unit tests; AI-authored methods are tagged `LLM GENERATED` in each test file.
+- **AI code reviews:** None yet — no PR has gone through an AI-assisted review this cycle.
 
 ## Extra Credit Log
 | Item | Who | Evidence (Issue/PR) |

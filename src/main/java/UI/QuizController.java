@@ -51,6 +51,6 @@ public class QuizController extends BaseController {
     /** Returns to the Dashboard. */
     @FXML
     protected void onBackClick(ActionEvent event) {
-        swapScene(event, "dashboard-view.fxml");
+        swapScene(event, SceneType.DASHBOARD);
     }
 }

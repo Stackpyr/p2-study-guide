@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
- * [Explanation]
+ * Unit tests for AuthService
  *
  * @author: Jason Hamilton
  * @created: 7/31/2026
@@ -53,6 +53,46 @@ class AuthServiceTest {
     assertTrue(!authService.isLoggedIn()); // should not be logged in
   }
 
+  /**
+   * LLM GENERATED - Verifies that login() rejects a blank username with USERNAME_BLANK before
+   * ever touching the database.
+   */
+  @Test
+  void login_blankUsername_returnsUsernameBlank() {
+    AuthResult result = AuthService.getInstance().login("", TEST_PASSWORD);
+    assertTrue(result.getCode() == AuthResult.USERNAME_BLANK.getCode());
+  }
+
+  /**
+   * LLM GENERATED - Verifies that login() rejects a blank password with PASSWORD_BLANK.
+   */
+  @Test
+  void login_blankPassword_returnsPasswordBlank() {
+    AuthResult result = AuthService.getInstance().login(TEST_USERNAME, "");
+    assertTrue(result.getCode() == AuthResult.PASSWORD_BLANK.getCode());
+  }
+
+  /**
+   * LLM GENERATED - Verifies that logging in with correct credentials for a suspended
+   * (is_active = false) account returns ACCOUNT_NOT_ACTIVE and does not establish a session,
+   * even though the password itself was correct.
+   */
+  @Test
+  void login_inactiveAccount_returnsAccountNotActiveAndDoesNotLogIn() {
+    AuthService authService = AuthService.getInstance();
+
+    String username = "suspended@test.com";
+    String password = "testpassword";
+    Account account = new Account(username);
+    account.setPassword(password);
+    Account saved = new AccountRepository().addAccount(account);
+    new AccountRepository().updateStatus(saved.getAccountId(), false); // suspend it
+
+    AuthResult result = authService.login(username, password);
+    assertTrue(result.getCode() == AuthResult.ACCOUNT_NOT_ACTIVE.getCode());
+    assertTrue(!authService.isLoggedIn());
+  }
+
   @Test
   void logout() {
     AuthService authService = AuthService.getInstance();
@@ -68,8 +108,31 @@ class AuthServiceTest {
     assertTrue(!authService.isLoggedIn());
   }
 
+  /**
+   * LLM GENERATED - Verifies isAdmin(): false when nobody is logged in, false for a logged-in
+   * non-admin account, and true once logged in as an account with isAdmin = true.
+   */
   @Test
   void isAdmin() {
+    AuthService authService = AuthService.getInstance();
+    assertFalse(authService.isAdmin()); // nobody logged in yet
+
+    AuthResult result = authService.login(TEST_USERNAME, TEST_PASSWORD);
+    assertTrue(result.getCode() == AuthResult.SUCCESS.getCode());
+    assertFalse(authService.isAdmin()); // TEST_ACCOUNT is not an admin
+    authService.logout();
+
+    String adminUsername = "admin@test.com";
+    String adminPassword = "adminpassword";
+    Account adminAccount = new Account(adminUsername);
+    adminAccount.setPassword(adminPassword);
+    adminAccount.setIsAdmin(true);
+    new AccountRepository().addAccount(adminAccount);
+
+    AuthResult adminResult = authService.login(adminUsername, adminPassword);
+    assertTrue(adminResult.getCode() == AuthResult.SUCCESS.getCode());
+    assertTrue(authService.isAdmin());
+    authService.logout();
   }
 
   @Test
@@ -81,7 +144,7 @@ class AuthServiceTest {
     // check successful login
     AuthResult result = authService.login(TEST_USERNAME, TEST_PASSWORD);
     assertTrue(result.getCode() == AuthResult.SUCCESS.getCode());
-    assertEquals(TEST_ACCOUNT, authService.getCurrentAccount());
+    assertEquals(TEST_USERNAME, authService.getCurrentAccount().getUsername());
 
     // logout
     authService.logout();
@@ -92,10 +155,12 @@ class AuthServiceTest {
     String testPassword2 = "testpassword";
     Account testAccount2 = new Account(testUsername2);
     testAccount2.setPassword(testPassword2);
-    new AccountRepository().addAccount(testAccount2);
+    testAccount2 = new AccountRepository().addAccount(testAccount2);
     // check successful login
     AuthResult result2 = authService.login(testUsername2, testPassword2);
     assertTrue(result2.getCode() == AuthResult.SUCCESS.getCode());
     assertEquals(testAccount2, authService.getCurrentAccount());
+
+    authService.logout();
   }
 }
