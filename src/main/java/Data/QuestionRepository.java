@@ -18,8 +18,8 @@ import java.sql.Statement;
 public class QuestionRepository {
     private final Connection conn;
     private final String GET_BY_QID_CMD = "SELECT * FROM question WHERE question_id = ?";
-    private final String INSERT_CMD = "INSERT INTO question (question_text, choice_a, choice_b, choice_c, choice_d, correct_answer) VALUES (?, ?, ?, ?, ?, ?)";
-    private final String UPDATE_CMD = "UPDATE question SET question_text = ?, choice_a = ?, choice_b= ?, choice_c = ?, choice_d = ?, correct_answer = ? WHERE question_id = ?";
+    private final String INSERT_CMD = "INSERT INTO question (question_text, category, choice_a, choice_b, choice_c, choice_d, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private final String UPDATE_CMD = "UPDATE question SET question_text = ?, category = ?, choice_a = ?, choice_b= ?, choice_c = ?, choice_d = ?, correct_answer = ? WHERE question_id = ?";
     private final String DELETE_CMD = "DELETE FROM question WHERE question_id = ?";
 
     /**
@@ -58,11 +58,12 @@ public class QuestionRepository {
         try (PreparedStatement addStmt = conn.prepareStatement(INSERT_CMD,
                 Statement.RETURN_GENERATED_KEYS)) {
             addStmt.setString(1, question.getQuestionText());
-            addStmt.setString(2, question.getChoiceA());
-            addStmt.setString(3, question.getChoiceB());
-            addStmt.setString(4, question.getChoiceC());
-            addStmt.setString(5, question.getChoiceD());
-            addStmt.setString(6, question.getCorrectAnswer());
+            addStmt.setString(2, question.getCategory());
+            addStmt.setString(3, question.getChoiceA());
+            addStmt.setString(4, question.getChoiceB());
+            addStmt.setString(5, question.getChoiceC());
+            addStmt.setString(6, question.getChoiceD());
+            addStmt.setString(7, question.getCorrectAnswer());
 
             addStmt.executeUpdate();
 
@@ -86,12 +87,13 @@ public class QuestionRepository {
     public Question updateQuestion(Question question) {
         try (PreparedStatement updateStmt = conn.prepareStatement(UPDATE_CMD)){
             updateStmt.setString(1, question.getQuestionText());
-            updateStmt.setString(2, question.getChoiceA());
-            updateStmt.setString(3, question.getChoiceB());
-            updateStmt.setString(4, question.getChoiceC());
-            updateStmt.setString(5, question.getChoiceD());
-            updateStmt.setString(6, question.getCorrectAnswer());
-            updateStmt.setInt(7, question.getQuestionId());
+            updateStmt.setString(2, question.getCategory());
+            updateStmt.setString(3, question.getChoiceA());
+            updateStmt.setString(4, question.getChoiceB());
+            updateStmt.setString(5, question.getChoiceC());
+            updateStmt.setString(6, question.getChoiceD());
+            updateStmt.setString(7, question.getCorrectAnswer());
+            updateStmt.setInt(8, question.getQuestionId());
 
             updateStmt.executeUpdate();
 
@@ -129,6 +131,7 @@ public class QuestionRepository {
             return new Question(
                     resultSet.getInt("question_id"),
                     resultSet.getString("question_text"),
+                    resultSet.getString("category"),
                     resultSet.getString("choice_a"),
                     resultSet.getString("choice_b"),
                     resultSet.getString("choice_c"),
