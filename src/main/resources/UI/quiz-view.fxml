@@ -54,23 +54,25 @@
           </font>
         </Text>
 
-        <Label text="Question 1" style="-fx-font-weight: bold;" />
-        <Label text="What is the correct answer?" wrapText="true" />
+        <Label fx:id="questionNumberLabel" text="Question 1"
+               style="-fx-font-weight: bold;" />
+        <Label fx:id="questionTextLabel" text="What is the correct answer?"
+               wrapText="true" />
 
         <VBox alignment="CENTER_LEFT" maxWidth="300.0" spacing="10.0">
           <children>
-            <RadioButton text="Option 1" toggleGroup="$answerGroup" />
-            <RadioButton text="Option 2" toggleGroup="$answerGroup" />
-            <RadioButton text="Option 3" toggleGroup="$answerGroup" />
-            <RadioButton text="Option 4" toggleGroup="$answerGroup" />
+            <RadioButton fx:id="answerA" text="Option 1" toggleGroup="$answerGroup" />
+            <RadioButton fx:id="answerB" text="Option 2" toggleGroup="$answerGroup" />
+            <RadioButton fx:id="answerC" text="Option 3" toggleGroup="$answerGroup" />
+            <RadioButton fx:id="answerD" text="Option 4" toggleGroup="$answerGroup" />
           </children>
         </VBox>
 
         <HBox alignment="CENTER" spacing="10.0">
           <children>
-            <Button onAction="#onPreviousClick" text="Previous" />
-            <Button onAction="#onNextClick" text="Next" />
-            <Button onAction="#onSubmitClick" text="Submit Quiz" />
+            <Button fx:id="previousButton" onAction="#onPreviousClick" text="Previous" />
+            <Button fx:id="nextButton" onAction="#onNextClick" text="Next" />
+            <Button fx:id="submitButton" onAction="#onSubmitClick" text="Submit Quiz" />
           </children>
         </HBox>
 
