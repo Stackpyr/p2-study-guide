@@ -13,11 +13,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
+import java.util.ArrayList;
+import java.util.List;
 
 public class QuestionRepository {
     private final Connection conn;
     private final String GET_BY_QID_CMD = "SELECT * FROM question WHERE question_id = ?";
+    private final String GET_ALL_CMD = "SELECT * FROM question ORDER BY question_id";
     private final String INSERT_CMD = "INSERT INTO question (question_text, choice_a, choice_b, choice_c, choice_d, correct_answer) VALUES (?, ?, ?, ?, ?, ?)";
     private final String UPDATE_CMD = "UPDATE question SET question_text = ?, choice_a = ?, choice_b= ?, choice_c = ?, choice_d = ?, correct_answer = ? WHERE question_id = ?";
     private final String DELETE_CMD = "DELETE FROM question WHERE question_id = ?";
@@ -47,6 +49,29 @@ public class QuestionRepository {
             System.out.println("Error: " + e.getMessage());
         }
         return null;
+    }
+
+    /**
+     * Retrieves all questions from the database.
+     */
+    public List<Question> getAllQuestions() {
+        List<Question> questions = new ArrayList<>();
+
+        try (PreparedStatement selectStmt = conn.prepareStatement(GET_ALL_CMD);
+             ResultSet resultSet = selectStmt.executeQuery()) {
+
+            while (resultSet.next()) {
+                Question question = mapRow(resultSet);
+
+                if (question != null) {
+                    questions.add(question);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error loading questions: " + e.getMessage());
+        }
+
+        return questions;
     }
 
     /**
