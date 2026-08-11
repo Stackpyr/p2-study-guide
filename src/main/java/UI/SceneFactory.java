@@ -28,9 +28,34 @@ public class SceneFactory {
     FXMLLoader loader = new FXMLLoader(SceneFactory.class.getResource(type.getFxml()));
     try {
       return new Scene(loader.load());
-    } catch (IOException e) {
-      System.out.println("Error loading FXML: " + e.getMessage());
-    }
+    } catch (IOException e) {System.out.println("Error loading FXML: " + e.getMessage());}
     return null;
   }
+
+  /**
+   * Builds the Results scene and supplies the final score.
+   */
+  public static Scene loadResults(
+          int score,
+          int totalQuestions) {
+
+    FXMLLoader loader =
+            new FXMLLoader(SceneFactory.class.getResource(SceneType.RESULT.getFxml()));
+
+    try {
+      Scene scene = new Scene(loader.load());
+
+      ResultController controller =
+              loader.getController();
+
+      controller.setResults(score, totalQuestions);
+
+      return scene;
+    } catch (IOException exception) {
+      System.out.println("Error loading Results FXML: " + exception.getMessage());
+    }
+
+    return null;
+  }
+
 }
