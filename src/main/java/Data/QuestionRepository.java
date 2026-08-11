@@ -13,6 +13,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class QuestionRepository {
@@ -47,6 +49,27 @@ public class QuestionRepository {
             System.out.println("Error: " + e.getMessage());
         }
         return null;
+    }
+
+    /**
+     * Retrieves all question
+     * @return list of all questions
+     */
+    public List<Question> getAllQuestions() {
+        List<Question> questions = new ArrayList<>();
+
+        String sqlSelectAllQuestions = "SELECT * FROM question";
+
+        try (PreparedStatement statement = conn.prepareStatement(sqlSelectAllQuestions);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                questions.add(mapRow(resultSet));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return questions;
     }
 
     /**

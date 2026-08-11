@@ -1,26 +1,78 @@
 package UI;
 
+import Data.Question;
+import Data.QuestionRepository;
+import javafx.collections.FXCollections;
+import Service.AuthService;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-
-import java.awt.event.ActionEvent;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 
 /**
- * [Brief one-sentence description of what this class does.]
+ *  Controller for QUestion Bank
  *
  * @author Analiza Boehning
- * @version 0.1.0
+ * @version 0.1.1
  * @since 8/4/2026
  */
 public class QuestionBankController extends BaseController {
+
     @FXML
-    public void initialize() {
+    private TextField searchQuestionsField;
+
+    @FXML
+    private ComboBox<String> categoryChoiceBox;
+
+    @FXML
+    private TableView<Question> questionTable;
+
+    @FXML
+    private TableColumn<Question, String> questionColumn;
+
+    @FXML
+    private TableColumn<Question, String> categoryColumn;
+
+    private final QuestionRepository questionRepository = new QuestionRepository();
+
+    @FXML
+    @Override
+    protected void initialize() {
         super.initialize();
 
-        // TODO: Load saved questions
+        questionColumn.setCellValueFactory(
+                new PropertyValueFactory<>("questionText"));
+
+        categoryColumn.setCellValueFactory(
+                new PropertyValueFactory<>("category"));
+
+        loadQuestions();
     }
+
+    /*
+    * Load the saved questions and populate the table
+     */
+    private void loadQuestions() {
+        questionTable.setItems(
+                FXCollections.observableArrayList(
+                        questionRepository.getAllQuestions()
+                )
+        );
+    }
+
 
     @FXML
     public void onAddQuestionClicked(ActionEvent event) {
-        // TODO: clicks to the add-question-view
+       swapScene(event, SceneType.ADD_QUESTION);
+    }
+
+    @FXML
+    protected void onLogoutClick(MouseEvent event) {
+        AuthService.getInstance().logout();
+        swapScene(event, SceneType.LOGIN);
     }
 }

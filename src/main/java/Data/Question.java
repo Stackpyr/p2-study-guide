@@ -25,6 +25,12 @@ public class Question {
         this.questionText = questionText;
     }
 
+    // To be used when creating a new question with a category
+    public Question(String questionText, String category) {
+        this.questionText = questionText;
+        this.category = category;
+    }
+
 /**
  * To be used by QuestionRepository when hydrating a Question from the db
  *
@@ -64,6 +70,7 @@ Question(
         return "Question{" +
                 "questionId=" + questionId +
                 ", questionText='" + questionText + '\'' +
+                ", category='" + category + '\'' +
                 '}';
     }
 
