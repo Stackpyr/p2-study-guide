@@ -253,12 +253,14 @@ public class QuizController extends BaseController {
 
             errorAlert.setTitle("Save Error");
             errorAlert.setHeaderText("The quiz could not be saved.");
-            errorAlert.setContentText("Please return to the dashboard " + "and try again.");
+            errorAlert.setContentText("Please return to the dashboard and try again.");
 
             errorAlert.showAndWait();
             statusLabel.setText("Quiz was not saved.");
             return;
         }
+
+        submitButton.setDisable(true);
 
         Scene resultScene = SceneFactory.loadResults(score, questions.size());
 
@@ -268,7 +270,7 @@ public class QuizController extends BaseController {
 
             errorAlert.setTitle("Scene Error");
             errorAlert.setHeaderText("The Results scene could not be opened.");
-
+            errorAlert.setContentText("Your quiz was saved, but the Results scene could not be opened. Return to the Dashboard.");
             errorAlert.showAndWait();
             return;
         }
