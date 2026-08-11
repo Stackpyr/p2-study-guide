@@ -21,7 +21,7 @@ CST 338 Project 2 — Team **Team 1**.
 |-------|-------|-----------------|--------|------------|-------|----------------------------------|-------------|
 | 1 — Accounts | Jason Hamilton | Stackpyr | | | | ScribeJava for Social OAUTH      | In-Progress |
 | 2 — Question Bank | Analiza Boehning | aboehning-cs |#6, #7, #8 |analiza/question-bank, analiza/question-bank-scene, analiza/question-database |#15, #20 | Advanced Query (Search & Filter) | In-Progress  |
-| 3 — Quiz Engine | Sawyer Phillips | sawyerphillips | #9 #10 #11 | sawyer/quiz-scene, sawyer/quiz-attempt-data |  | Alerts and Notifications | Planned     |
+| 3 — Quiz Engine | Sawyer Phillips | sawyerphillips | #9, #10, #11 | sawyer/quiz-attempt-data, sawyer/quiz-scene, sawyer/quiz-scoring, sawyer/result-scene-alerts | #17, #18, #22, #23 | Alerts and Notifications | In-Progress |
 
 _Status values: planned · in-progress · complete_
 
@@ -33,22 +33,25 @@ Issue if the team later decides to attempt it for extra credit._
 - Slide 5 - Study Mode & Tagging: not building (team size).
 
 ## Code Review Log
-| PR | Author | Human reviewer(s)                 | AI review (link) | Outcome                |
-|----|--------|-----------------------------------|------------------|------------------------|
-| [#12](https://github.com/Stackpyr/p2-study-guide/pull/12) | Jason Hamilton | Analiza Boehning, Sawyer Phillips | — | Merged                 |
-| [#13](https://github.com/Stackpyr/p2-study-guide/pull/13) | Jason Hamilton | Sawyer Phillips, Analiza Boehning | — | Merged                 |
-| [#14](https://github.com/Stackpyr/p2-study-guide/pull/14) | Jason Hamilton | Analiza Boehning, Sawyer Phillips | — | Merged                 |
-| [#15](https://github.com/Stackpyr/p2-study-guide/pull/15) | Analiza Boehning | Jason Hamilton, Sawyer Phillips   | — | Merged                 |
-| [#16](https://github.com/Stackpyr/p2-study-guide/pull/16) | Jason Hamilton | Sawyer Phillips, Analiza Boehning | — | Merged                 |
-| [#17](https://github.com/Stackpyr/p2-study-guide/pull/17) | Sawyer Phillips | Jason Hamilton, Analiza Boehning  | — | Merged                 |
-| [#18](https://github.com/Stackpyr/p2-study-guide/pull/18) | Sawyer Phillips | Jason Hamilton, Analiza Boehning  | — | Merged |
-| [#19](https://github.com/Stackpyr/p2-study-guide/pull/19) | Sawyer Phillips | Jason Hamilton, Analiza Boehning  | — | Merged |
-| [#20](https://github.com/Stackpyr/p2-study-guide/pull/20) | Analiza Boehning | Jason Hamilton, Sawyer Phillips   | — | Merged |
-| #6 | Analiza Boehning | Jason Hamilton                    | | Merged                 |
+| PR | Author | Human reviewer(s)                 | AI review (link)                                                                        | Outcome                                                                                                     |
+|----|--------|-----------------------------------|-----------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------|
+| [#12](https://github.com/Stackpyr/p2-study-guide/pull/12) | Jason Hamilton | Analiza Boehning, Sawyer Phillips | —                                                                                       | Merged                                                                                                      |
+| [#13](https://github.com/Stackpyr/p2-study-guide/pull/13) | Jason Hamilton | Sawyer Phillips, Analiza Boehning | —                                                                                       | Merged                                                                                                      |
+| [#14](https://github.com/Stackpyr/p2-study-guide/pull/14) | Jason Hamilton | Analiza Boehning, Sawyer Phillips | —                                                                                       | Merged                                                                                                      |
+| [#15](https://github.com/Stackpyr/p2-study-guide/pull/15) | Analiza Boehning | Jason Hamilton, Sawyer Phillips   | —                                                                                       | Merged                                                                                                      |
+| [#16](https://github.com/Stackpyr/p2-study-guide/pull/16) | Jason Hamilton | Sawyer Phillips, Analiza Boehning | —                                                                                       | Merged                                                                                                      |
+| [#17](https://github.com/Stackpyr/p2-study-guide/pull/17) | Sawyer Phillips | Jason Hamilton, Analiza Boehning  | —                                                                                       | Merged                                                                                                      |
+| [#18](https://github.com/Stackpyr/p2-study-guide/pull/18) | Sawyer Phillips | Jason Hamilton, Analiza Boehning  | —                                                                                       | Merged                                                                                                      |
+| [#19](https://github.com/Stackpyr/p2-study-guide/pull/19) | Sawyer Phillips | Jason Hamilton, Analiza Boehning  | —                                                                                       | Merged                                                                                                      |
+| [#20](https://github.com/Stackpyr/p2-study-guide/pull/20) | Analiza Boehning | Jason Hamilton, Sawyer Phillips   | —                                                                                       | Merged                                                                                                      |
+| #6 | Analiza Boehning | Jason Hamilton                    |                                                                                         | Merged                                                                                                      |
+| [#22](https://github.com/Stackpyr/p2-study-guide/pull/22) | Sawyer Phillips | Jason Hamilton, Analiza Boehning | —                                                                                       | Merged                                                                                                      |
+| [#23](https://github.com/Stackpyr/p2-study-guide/pull/23) | Sawyer Phillips | Waiting for Jason Hamilton and Analiza Boehning | [AI review](https://github.com/Stackpyr/p2-study-guide/pull/23#issuecomment-5256267752) | Open |
 
 ## AI Usage Log
 - **AI-drafted tests:** [TESTING.md](TESTING.md) — per Jason Hamilton (Slice 1: Accounts). Covers `Account`, `AccountRepository`, `AuthService`, and `DatabaseManager` unit tests; AI-authored methods are tagged `LLM GENERATED` in each test file.
-- **AI code reviews:** None yet — no PR has gone through an AI-assisted review this cycle.
+
+- **AI code reviews:** - [AI review](https://github.com/Stackpyr/p2-study-guide/pull/23#issuecomment-5256267752), [adjudication](https://github.com/Stackpyr/p2-study-guide/pull/23#issuecomment-5256602846), and [fixing commit](https://github.com/Stackpyr/p2-study-guide/commit/7b6661c1f97e90ed6ee1fef3dd1eed5d94cd980a).
 
 ## Extra Credit Log
 | Item | Who | Evidence (Issue/PR) |
