@@ -20,6 +20,7 @@ import javafx.scene.input.MouseEvent;
  * @version 0.1.1
  * @since 8/4/2026
  */
+
 public class QuestionBankController extends BaseController {
 
     @FXML
@@ -39,6 +40,10 @@ public class QuestionBankController extends BaseController {
 
     private final QuestionRepository questionRepository = new QuestionRepository();
 
+
+    /**
+     * Initializes the Question bank view
+     */
     @FXML
     @Override
     protected void initialize() {
@@ -73,11 +78,19 @@ public class QuestionBankController extends BaseController {
         );
     }
 
+    /**
+     * swaps to the Add Question scene so the user can add a question
+     * @param event add question scene
+     */
     @FXML
     public void onAddQuestionClicked(ActionEvent event) {
        swapScene(event, SceneType.ADD_QUESTION);
     }
 
+    /**
+     * Filters the table based on a category selected or will show all questions if
+     * equal to All Categories.
+     */
     @FXML
     public void onCategorySelected() {
         String category = categoryChoiceBox.getValue();
@@ -93,6 +106,10 @@ public class QuestionBankController extends BaseController {
         }
     }
 
+    /**
+     * Logs user out of the application and returns to login screen
+     * @param event login screen
+     */
     @FXML
     protected void onLogoutClick(MouseEvent event) {
         AuthService.getInstance().logout();
