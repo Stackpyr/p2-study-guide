@@ -9,6 +9,7 @@
 package UI;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 
@@ -25,10 +26,36 @@ public class SceneFactory {
    * @return the Scene
    */
   public static Scene load(SceneType type) {
-    FXMLLoader loader = new FXMLLoader(SceneFactory.class.getResource(type.getFxml()));
+    return load(type, null);
+  }
+
+  /**
+   * Builds a Scene and allows its controller to be set up
+   *
+   * @param type type of scene to build
+   * @param onLoad setup to run after the scene loads
+   * @return the Scene
+   */
+  private static <T> Scene load(
+          SceneType type,
+          Consumer<T> onLoad) {
+
+    FXMLLoader loader =
+            new FXMLLoader(SceneFactory.class.getResource(type.getFxml()));
+
     try {
-      return new Scene(loader.load());
-    } catch (IOException e) {System.out.println("Error loading FXML: " + e.getMessage());}
+      Scene scene = new Scene(loader.load());
+
+      if (onLoad != null) {
+        T controller = loader.getController();
+        onLoad.accept(controller);
+      }
+
+      return scene;
+    } catch (IOException e) {
+      System.out.println("Error loading FXML: " + e.getMessage());
+    }
+
     return null;
   }
 
@@ -39,23 +66,11 @@ public class SceneFactory {
           int score,
           int totalQuestions) {
 
-    FXMLLoader loader =
-            new FXMLLoader(SceneFactory.class.getResource(SceneType.RESULT.getFxml()));
-
-    try {
-      Scene scene = new Scene(loader.load());
-
-      ResultController controller =
-              loader.getController();
-
-      controller.setResults(score, totalQuestions);
-
-      return scene;
-    } catch (IOException exception) {
-      System.out.println("Error loading Results FXML: " + exception.getMessage());
-    }
-
-    return null;
+    return load(
+            SceneType.RESULT,
+            (ResultController controller) ->
+                    controller.setResults(score, totalQuestions)
+    );
   }
 
 }

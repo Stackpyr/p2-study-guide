@@ -272,6 +272,7 @@ public class QuizController extends BaseController {
             errorAlert.setHeaderText("The Results scene could not be opened.");
             errorAlert.setContentText("Your quiz was saved, but the Results scene could not be opened. Return to the Dashboard.");
             errorAlert.showAndWait();
+            swapScene(event, SceneType.DASHBOARD);
             return;
         }
 
