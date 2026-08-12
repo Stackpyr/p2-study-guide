@@ -37,6 +37,11 @@
                 <ComboBox fx:id="categoryChoiceBox" prefWidth="200.0" />
             </HBox>
 
+            <Label fx:id="noMatchesLabel"
+                   text="No matches found"
+                   style="-fx-text-fill: red;"
+                   visible="false"
+                   />
 
             <TableView fx:id="questionTable" prefHeight="350.0" prefWidth="350.0" VBox.vgrow="ALWAYS">
                 <columns>

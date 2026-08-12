@@ -2,7 +2,7 @@
  * Responsible for CRUD operations on the question table and hydrating the Question object
  *
  * @author Analiza Boehning
- * @version 0.1.1
+ * @version 0.1.1 added Search feature
  * @since 7/31/2026
  */
 
@@ -20,6 +20,9 @@ import java.util.List;
 public class QuestionRepository {
     private final Connection conn;
     private final String GET_BY_QID_CMD = "SELECT * FROM question WHERE question_id = ?";
+    private final String GET_BY_CATEGORY_CMD = "SELECT * FROM question WHERE category = ?";
+    private final String GET_BY_KEYWORD_CMD = "SELECT * FROM question WHERE question_text LIKE ?";
+    private final String GET_BY_CATEGORY_AND_KEYWORD_CMD = "SELECT * FROM question WHERE category = ? AND question_text LIKE ?";
     private final String INSERT_CMD = "INSERT INTO question (question_text, category, choice_a, choice_b, choice_c, choice_d, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private final String UPDATE_CMD = "UPDATE question SET question_text = ?, category = ?, choice_a = ?, choice_b= ?, choice_c = ?, choice_d = ?, correct_answer = ? WHERE question_id = ?";
     private final String DELETE_CMD = "DELETE FROM question WHERE question_id = ?";
@@ -52,7 +55,98 @@ public class QuestionRepository {
     }
 
     /**
-     * Retrieves all question
+     * Retrieves questions within a specific category
+     * @param category category being searched for
+     * @return list of questions that match under the searched category
+     */
+    public List<Question> getQuestionsByCategory(String category) {
+        List<Question> questions = new ArrayList<>();
+
+        try(PreparedStatement stmt = conn.prepareStatement(GET_BY_CATEGORY_CMD)) {
+            stmt.setString(1, category);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    questions.add(mapRow(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return questions;
+    }
+
+    /**
+     * Retrieves all categories from the table
+     * @return list of categories
+     */
+    public List<String> getAllCategories() {
+        List<String> categories = new ArrayList<>();
+
+        String categoryQuery = "SELECT DISTINCT category FROM question";
+
+        try (PreparedStatement stmt = conn.prepareStatement(categoryQuery);
+            ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                    categories.add(rs.getString("category"));
+                }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return categories;
+    }
+
+    /**
+     * Retrieves questions where the question text matches with a specified keyword.
+     * @param keyword the text to search for
+     * @return the list of questions whose text matches the keyword or an empty list of no matches found.
+     */
+    public List<Question> getQuestionsByKeyword(String keyword) {
+        List<Question> questions = new ArrayList<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(GET_BY_KEYWORD_CMD)) {
+            // adding % so the keyword can appear anywhere in the question
+            stmt.setString(1, "%" + keyword + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    questions.add(mapRow(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return questions;
+    }
+
+    /**
+     * Retrieves questions that matches with a specified keyword and category.
+     * @param keyword
+     * @param category
+     * @return the list of questions whose text matches the keyword or an empty list of no matches found.
+     */
+    public List<Question> getQuestionsByCategoryAndKeyword(String keyword, String category) {
+        List<Question> questions = new ArrayList<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(GET_BY_CATEGORY_AND_KEYWORD_CMD)) {
+            stmt.setString(1,  category );
+            // adding % so the keyword can appear anywhere in the question
+            stmt.setString(2, "%" + keyword + "%");
+
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    questions.add(mapRow(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return questions;
+    }
+
+    /**
+     * Retrieves all questions
      * @return list of all questions
      */
     public List<Question> getAllQuestions() {
