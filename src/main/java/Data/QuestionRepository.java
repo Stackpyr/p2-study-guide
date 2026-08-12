@@ -16,16 +16,16 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class QuestionRepository {
     private final Connection conn;
     private final String GET_BY_QID_CMD = "SELECT * FROM question WHERE question_id = ?";
+    private final String GET_ALL_CMD = "SELECT * FROM question ORDER BY question_id";
     private final String GET_BY_CATEGORY_CMD = "SELECT * FROM question WHERE category = ?";
     private final String GET_BY_KEYWORD_CMD = "SELECT * FROM question WHERE question_text LIKE ?";
     private final String GET_BY_CATEGORY_AND_KEYWORD_CMD = "SELECT * FROM question WHERE category = ? AND question_text LIKE ?";
     private final String INSERT_CMD = "INSERT INTO question (question_text, category, choice_a, choice_b, choice_c, choice_d, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private final String UPDATE_CMD = "UPDATE question SET question_text = ?, category = ?, choice_a = ?, choice_b= ?, choice_c = ?, choice_d = ?, correct_answer = ? WHERE question_id = ?";
-    private final String DELETE_CMD = "DELETE FROM question WHERE question_id = ?";
+   private final String DELETE_CMD = "DELETE FROM question WHERE question_id = ?";
 
     /**
      * Creates a QuestionRepository and database connection
@@ -52,6 +52,29 @@ public class QuestionRepository {
             System.out.println("Error: " + e.getMessage());
         }
         return null;
+    }
+
+    /**
+     * Retrieves all questions from the database.
+     */
+    public List<Question> getAllQuestions() {
+        List<Question> questions = new ArrayList<>();
+
+        try (PreparedStatement selectStmt = conn.prepareStatement(GET_ALL_CMD);
+             ResultSet resultSet = selectStmt.executeQuery()) {
+
+            while (resultSet.next()) {
+                Question question = mapRow(resultSet);
+
+                if (question != null) {
+                    questions.add(question);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error loading questions: " + e.getMessage());
+        }
+
+        return questions;
     }
 
     /**
@@ -144,28 +167,6 @@ public class QuestionRepository {
         }
         return questions;
     }
-
-    /**
-     * Retrieves all questions
-     * @return list of all questions
-     */
-    public List<Question> getAllQuestions() {
-        List<Question> questions = new ArrayList<>();
-
-        String sqlSelectAllQuestions = "SELECT * FROM question";
-
-        try (PreparedStatement statement = conn.prepareStatement(sqlSelectAllQuestions);
-             ResultSet resultSet = statement.executeQuery()) {
-            while (resultSet.next()) {
-                questions.add(mapRow(resultSet));
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
-        return questions;
-    }
-
     /**
      * Add Question to the database
      * @param question Question to be added
