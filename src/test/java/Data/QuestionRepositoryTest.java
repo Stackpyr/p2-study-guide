@@ -60,7 +60,7 @@ class QuestionRepositoryTest {
     }
 
     /**
-     *
+     * Verify questions can be retrieved by their category
      */
     @Test
     void getQuestionByCategory() {
@@ -79,6 +79,9 @@ class QuestionRepositoryTest {
         assertEquals("Object-Oriented Programming", result.get(0).getCategory());
     }
 
+    /**
+     * Verify all categories and corresponding questions are returned
+     */
     @Test
     void getAllQuestionsByCategory() {
         Question testQ1 = createTestQuestion("What is Java?");
@@ -94,6 +97,23 @@ class QuestionRepositoryTest {
         assertEquals(2, result.size());
         assertTrue(result.contains("Object-Oriented Programming"));
         assertTrue(result.contains("Databases"));
+
+    }
+
+    /**
+     * Verify keyword search returns only the questions containing that keyword
+     */
+    @Test
+    void getQuestionsByKeyword() {
+        repository.addQuestion(createTestQuestion("What is Java?"));
+        repository.addQuestion(createTestQuestion("What SQL command adds a new row of data into a table?"));
+        repository.addQuestion(createTestQuestion("What is the standard main entry point for a Java program?"));
+
+        List<Question> result = repository.getQuestionsByKeyword("Java");
+
+        assertEquals(2, result.size());
+        assertEquals("What is Java?", result.get(0).getQuestionText());
+        assertEquals("What is the standard main entry point for a Java program?", result.get(1).getQuestionText());
 
     }
 
@@ -132,6 +152,9 @@ class QuestionRepositoryTest {
         assertEquals("Software Engineering", result.getCategory());
     }
 
+    /**
+     * Verify a question can be deleted
+     */
     @Test
     void deleteQuestion() {
         Question question = repository.addQuestion(

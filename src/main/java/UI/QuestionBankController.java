@@ -63,6 +63,7 @@ public class QuestionBankController extends BaseController {
 
         categoryChoiceBox.setValue("All Categories");
         categoryChoiceBox.setOnAction(event -> onCategorySelected());
+        searchQuestionsField.setOnAction(event -> onSearchQuestions());
 
         loadQuestions();
     }
@@ -105,6 +106,25 @@ public class QuestionBankController extends BaseController {
             );
         }
     }
+
+    /**
+     * Filters the table based on a keyword searched by the user
+     */
+    @FXML
+    public void onSearchQuestions() {
+        String keyword = searchQuestionsField.getText().trim();
+
+        if (keyword.isEmpty()) {
+            loadQuestions();
+        } else {
+            questionTable.setItems(
+                    FXCollections.observableArrayList(
+                            questionRepository.getQuestionsByKeyword(keyword)
+                    )
+            );
+        }
+    }
+
 
     /**
      * Logs user out of the application and returns to login screen

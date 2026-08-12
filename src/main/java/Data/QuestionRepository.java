@@ -21,6 +21,7 @@ public class QuestionRepository {
     private final Connection conn;
     private final String GET_BY_QID_CMD = "SELECT * FROM question WHERE question_id = ?";
     private final String GET_BY_CATEGORY_CMD = "SELECT * FROM question WHERE category = ?";
+    private final String GET_BY_KEYWORD_CMD = "SELECT * FROM question WHERE question_text LIKE ?";
     private final String INSERT_CMD = "INSERT INTO question (question_text, category, choice_a, choice_b, choice_c, choice_d, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private final String UPDATE_CMD = "UPDATE question SET question_text = ?, category = ?, choice_a = ?, choice_b= ?, choice_c = ?, choice_d = ?, correct_answer = ? WHERE question_id = ?";
     private final String DELETE_CMD = "DELETE FROM question WHERE question_id = ?";
@@ -95,7 +96,30 @@ public class QuestionRepository {
     }
 
     /**
-     * Retrieves all question
+     * Retrieves questions where the question text matches with a specified keyword.
+     * @param keyword the text to search for
+     * @return the list of questions whose text matches the keyword or an empty list of no matches found.
+     */
+    public List<Question> getQuestionsByKeyword(String keyword) {
+        List<Question> questions = new ArrayList<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(GET_BY_KEYWORD_CMD)) {
+            // adding % so the keyword can appear anywhere in the question
+            stmt.setString(1, "%" + keyword + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    questions.add(mapRow(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return questions;
+    }
+
+    /**
+     * Retrieves all questions
      * @return list of all questions
      */
     public List<Question> getAllQuestions() {
