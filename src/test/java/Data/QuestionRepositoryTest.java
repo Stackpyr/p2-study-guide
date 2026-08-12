@@ -118,6 +118,33 @@ class QuestionRepositoryTest {
     }
 
     /**
+     * Verify that questions are filtered by both keywork and category
+     */
+    @Test
+    void getQuestionsByCategoryAndKeyword() {
+        Question testQ1 = createTestQuestion("What is Java?");
+        testQ1.setCategory("Object-Oriented Programming");
+
+        Question testQ2 = createTestQuestion("What SQL command adds a new row of data into a table?");
+        testQ2.setCategory("Databases");
+
+        Question testQ3 = createTestQuestion("How is encapsulation achieved in a Java class?");
+        testQ3.setCategory("Object-Oriented Programming");
+
+        repository.addQuestion(testQ1);
+        repository.addQuestion(testQ2);
+        repository.addQuestion(testQ3);
+
+        List<Question> result = repository.getQuestionsByCategoryAndKeyword("Java", "Object-Oriented Programming");
+
+        assertEquals(2, result.size());
+        assertEquals("What is Java?", result.get(0).getQuestionText());
+        assertEquals("How is encapsulation achieved in a Java class?", result.get(1).getQuestionText()
+        );
+
+    }
+
+    /**
      * A question can be added and receives an ID
      */
     @Test

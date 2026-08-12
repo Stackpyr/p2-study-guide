@@ -14,7 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
 /**
- *  Controller for Question Bank that shows a table of all questions with search and filter options.
+ *  Controller for Question Bank that shows a table of all questions with search and filter options based on user selection/input.
  *
  * @author Analiza Boehning
  * @version 0.1.1
@@ -56,14 +56,15 @@ public class QuestionBankController extends BaseController {
                 new PropertyValueFactory<>("category"));
 
         categoryChoiceBox.getItems().addAll(
+                "All Categories",
                 "Object-Oriented Programming",
                 "Databases",
                 "Software Engineering"
         );
 
         categoryChoiceBox.setValue("All Categories");
-        categoryChoiceBox.setOnAction(event -> onCategorySelected());
-        searchQuestionsField.setOnAction(event -> onSearchQuestions());
+        categoryChoiceBox.setOnAction(event -> filterQuestionsByCategoryAndKeyword());
+        searchQuestionsField.setOnAction(event -> filterQuestionsByCategoryAndKeyword());
 
         loadQuestions();
     }
@@ -89,42 +90,40 @@ public class QuestionBankController extends BaseController {
     }
 
     /**
-     * Filters the table based on a category selected or will show all questions if
-     * equal to All Categories.
+     * Update the table based on the keyword and category selected
      */
-    @FXML
-    public void onCategorySelected() {
+    private void filterQuestionsByCategoryAndKeyword() {
+        String keyword = searchQuestionsField.getText().trim();
         String category = categoryChoiceBox.getValue();
 
-        if (category.equals("All Categories")) {
-            loadQuestions();
-        } else {
+        // Check for if a keyword is entered
+        boolean keywordEntered = !keyword.isEmpty();
+
+        // Check for if a category is selected excluding all categories
+        boolean categorySelected = category != null && !category.equals("All Categories");
+
+        if (keywordEntered && categorySelected) { // if both filters are being used
             questionTable.setItems(
                     FXCollections.observableArrayList(
-                            questionRepository.getQuestionsByCategory(category)
+                            questionRepository.getQuestionsByCategoryAndKeyword(keyword, category)
                     )
             );
-        }
-    }
-
-    /**
-     * Filters the table based on a keyword searched by the user
-     */
-    @FXML
-    public void onSearchQuestions() {
-        String keyword = searchQuestionsField.getText().trim();
-
-        if (keyword.isEmpty()) {
-            loadQuestions();
-        } else {
+        } else if (keywordEntered) { // if only a keyword was entered
             questionTable.setItems(
                     FXCollections.observableArrayList(
                             questionRepository.getQuestionsByKeyword(keyword)
                     )
             );
+        } else if (categorySelected) { // if only the category is selected
+            questionTable.setItems(
+                    FXCollections.observableArrayList(
+                            questionRepository.getQuestionsByCategory(category)
+                    )
+            );
+        } else {
+            loadQuestions();
         }
     }
-
 
     /**
      * Logs user out of the application and returns to login screen
