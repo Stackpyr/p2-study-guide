@@ -73,6 +73,7 @@ public class QuizController extends BaseController {
 
     private List<Question> questions = List.of();
     private int currentQuestionIndex = 0;
+    private QuizAttempt currentAttempt;
 
     /**
      * Loads the quiz questions when the scene opens.
@@ -101,7 +102,38 @@ public class QuizController extends BaseController {
             return;
         }
 
+        if (!startQuizAttempt()) {
+            previousButton.setDisable(true);
+            nextButton.setDisable(true);
+            submitButton.setDisable(true);
+            statusLabel.setText("Quiz attempt could not be started.");
+            return;
+        }
+
         showCurrentQuestion();
+    }
+
+    /**
+     * Creates and reads the current quiz attempt.
+     */
+    private boolean startQuizAttempt() {
+        if (!AuthService.getInstance().isLoggedIn()) {
+            return false;
+        }
+
+        int accountId = AuthService.getInstance().getCurrentAccount().getAccountId();
+
+        QuizAttempt newAttempt = new QuizAttempt(accountId, questions.size());
+
+        QuizAttempt savedAttempt = quizAttemptRepository.addQuizAttempt(newAttempt);
+
+        if (savedAttempt == null) {
+            return false;
+        }
+
+        currentAttempt = quizAttemptRepository.getById(savedAttempt.getAttemptId());
+
+        return currentAttempt != null;
     }
 
     /**
@@ -141,9 +173,7 @@ public class QuizController extends BaseController {
         }
 
         String selectedAnswer =
-                answerGroup.getSelectedToggle()
-                        .getUserData()
-                        .toString();
+                answerGroup.getSelectedToggle().getUserData().toString();
 
         selectedAnswers.put(currentQuestionIndex, selectedAnswer);
     }
@@ -203,26 +233,17 @@ public class QuizController extends BaseController {
     }
 
     /**
-     * Saves the completed quiz attempt.
+     * Updates the current attempt with its final score.
      */
-    private boolean saveQuizAttempt(int score) {
-        if (!AuthService.getInstance().isLoggedIn()) {
-            return false;
+    private QuizAttempt completeQuizAttempt(int score) {
+        if (currentAttempt == null) {
+            return null;
         }
 
-        int accountId =
-                AuthService.getInstance()
-                        .getCurrentAccount()
-                        .getAccountId();
+        currentAttempt.setScore(score);
+        currentAttempt.setCompletedAt(LocalDateTime.now().toString());
 
-        QuizAttempt attempt =
-                new QuizAttempt(accountId, questions.size());
-
-        attempt.setScore(score);
-        attempt.setCompletedAt(LocalDateTime.now().toString());
-
-        return quizAttemptRepository.addQuizAttempt(attempt)
-                != null;
+        return quizAttemptRepository.updateQuizAttempt(currentAttempt);
     }
 
     /**
@@ -248,7 +269,9 @@ public class QuizController extends BaseController {
 
         int score = quizService.calculateScore(questions, selectedAnswers);
 
-        if (!saveQuizAttempt(score)) {
+        QuizAttempt completedAttempt = completeQuizAttempt(score);
+
+        if (completedAttempt == null) {
             Alert errorAlert = new Alert(Alert.AlertType.ERROR);
 
             errorAlert.setTitle("Save Error");
@@ -262,7 +285,7 @@ public class QuizController extends BaseController {
 
         submitButton.setDisable(true);
 
-        Scene resultScene = SceneFactory.loadResults(score, questions.size());
+        Scene resultScene = SceneFactory.loadResults(completedAttempt.getScore(), completedAttempt.getTotalQuestions());
 
         if (resultScene == null) {
             Alert errorAlert =
@@ -284,6 +307,24 @@ public class QuizController extends BaseController {
      */
     @FXML
     protected void onBackClick(ActionEvent event) {
+        if (currentAttempt != null) {
+            boolean deleted = quizAttemptRepository.deleteQuizAttempt(currentAttempt.getAttemptId());
+
+            if (!deleted) {
+                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+
+                errorAlert.setTitle("Delete Error");
+                errorAlert.setHeaderText("The unfinished quiz could not be removed.");
+                errorAlert.setContentText("Please try again.");
+
+                errorAlert.showAndWait();
+                return;
+            }
+
+            currentAttempt = null;
+        }
+
+
         swapScene(event, SceneType.DASHBOARD);
     }
 }
