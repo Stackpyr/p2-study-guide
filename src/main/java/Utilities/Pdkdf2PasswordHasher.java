@@ -21,10 +21,7 @@ public class Pdkdf2PasswordHasher implements PasswordHasher {
   public String generateSalt() {
     byte[] saltBytes = new byte[16];
     new java.security.SecureRandom().nextBytes(saltBytes);
-    // Base64-encode the raw bytes; converting binary data with `new String(bytes)`
-    // uses the platform default charset and can corrupt the value (it is not
-    // guaranteed to be valid text), which would make later verifyPassword() calls
-    // fail unpredictably across environments.
+    // Base64-encode the raw bytes to avoid loss of information when converting to a string.
     return Base64.getEncoder().encodeToString(saltBytes);
   }
 
@@ -34,8 +31,7 @@ public class Pdkdf2PasswordHasher implements PasswordHasher {
       KeySpec spec = new PBEKeySpec(password.toCharArray(), Base64.getDecoder().decode(salt), 65536, 128);
       SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
       byte[] hash = factory.generateSecret(spec).getEncoded();
-      // Same issue as generateSalt(): encode raw bytes as Base64 instead of
-      // lossily reinterpreting them as platform-default-charset text.
+      // Same issue as generateSalt(): encode raw bytes as Base64
       return Base64.getEncoder().encodeToString(hash);
     } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
       System.out.println("Error hashing password: " + e.getMessage());

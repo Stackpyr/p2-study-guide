@@ -24,7 +24,10 @@ public class DatabaseManager {
   private static DatabaseManager instance; // singleton
   private static Connection connection;
 
-  //Reads the connection string from the "app.dbUrl" system property, falling back to the real file database if it isn't set
+  /**
+   * Automatically determines if it should use an in memory database (for testing
+   * purposes) or a file database if we want to persist the data
+   */
   private static String resolveDbUrl() {
     return System.getProperty("app.dbUrl", FILE_DB_URL);
   }
