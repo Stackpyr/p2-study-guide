@@ -12,6 +12,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Label;
+
+import java.util.List;
 
 /**
  *  Controller for Question Bank that shows a table of all questions with search and filter options based on user selection/input.
@@ -38,6 +41,9 @@ public class QuestionBankController extends BaseController {
     @FXML
     private TableColumn<Question, String> categoryColumn;
 
+    @FXML
+    private Label noMatchesLabel;
+
     private final QuestionRepository questionRepository = new QuestionRepository();
 
 
@@ -63,8 +69,8 @@ public class QuestionBankController extends BaseController {
         );
 
         categoryChoiceBox.setValue("All Categories");
-        categoryChoiceBox.setOnAction(event -> filterQuestionsByCategoryAndKeyword());
-        searchQuestionsField.setOnAction(event -> filterQuestionsByCategoryAndKeyword());
+        categoryChoiceBox.setOnAction(event -> filterQuestions());
+        searchQuestionsField.setOnAction(event -> filterQuestions());
 
         loadQuestions();
     }
@@ -73,11 +79,14 @@ public class QuestionBankController extends BaseController {
     * Load the saved questions and populate the table
      */
     private void loadQuestions() {
+        List<Question> questions = questionRepository.getAllQuestions();
+
         questionTable.setItems(
                 FXCollections.observableArrayList(
                         questionRepository.getAllQuestions()
                 )
         );
+        noMatchesMessageHandler(questions);
     }
 
     /**
@@ -92,7 +101,7 @@ public class QuestionBankController extends BaseController {
     /**
      * Update the table based on the keyword and category selected
      */
-    private void filterQuestionsByCategoryAndKeyword() {
+    private void filterQuestions() {
         String keyword = searchQuestionsField.getText().trim();
         String category = categoryChoiceBox.getValue();
 
@@ -103,26 +112,38 @@ public class QuestionBankController extends BaseController {
         boolean categorySelected = category != null && !category.equals("All Categories");
 
         if (keywordEntered && categorySelected) { // if both filters are being used
-            questionTable.setItems(
-                    FXCollections.observableArrayList(
-                            questionRepository.getQuestionsByCategoryAndKeyword(keyword, category)
-                    )
-            );
+          List<Question> questions = questionRepository.getQuestionsByCategoryAndKeyword(keyword, category);
+
+          questionTable.setItems(FXCollections.observableArrayList(questions));
+
+            noMatchesMessageHandler(questions);
+
         } else if (keywordEntered) { // if only a keyword was entered
-            questionTable.setItems(
-                    FXCollections.observableArrayList(
-                            questionRepository.getQuestionsByKeyword(keyword)
-                    )
-            );
+            List<Question> questions = questionRepository.getQuestionsByKeyword(keyword);
+
+            questionTable.setItems(FXCollections.observableArrayList(questions));
+
+            noMatchesMessageHandler(questions);
         } else if (categorySelected) { // if only the category is selected
-            questionTable.setItems(
-                    FXCollections.observableArrayList(
-                            questionRepository.getQuestionsByCategory(category)
-                    )
-            );
+            List<Question> questions = questionRepository.getQuestionsByCategory(category);
+
+            questionTable.setItems(FXCollections.observableArrayList(questions));
+
+            noMatchesMessageHandler(questions);
         } else {
             loadQuestions();
+//            noMatchesMessageHandler(questionRepository.getAllQuestions());
         }
+    }
+
+    /**
+     * Display or hide the 'No Matches" message based on whether the filtered question list is empty
+     * @param questions questions currently displayed in the table
+     */
+    private void noMatchesMessageHandler(List<Question> questions) {
+        boolean noMatchesFound = questions.isEmpty();
+
+        noMatchesLabel.setVisible(noMatchesFound);
     }
 
     /**
