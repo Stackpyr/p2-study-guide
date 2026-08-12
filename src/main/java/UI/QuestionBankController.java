@@ -57,6 +57,7 @@ public class QuestionBankController extends BaseController {
         );
 
         categoryChoiceBox.setValue("All Categories");
+        categoryChoiceBox.setOnAction(event -> onCategorySelected());
 
         loadQuestions();
     }
@@ -75,6 +76,21 @@ public class QuestionBankController extends BaseController {
     @FXML
     public void onAddQuestionClicked(ActionEvent event) {
        swapScene(event, SceneType.ADD_QUESTION);
+    }
+
+    @FXML
+    public void onCategorySelected() {
+        String category = categoryChoiceBox.getValue();
+
+        if (category.equals("All Categories")) {
+            loadQuestions();
+        } else {
+            questionTable.setItems(
+                    FXCollections.observableArrayList(
+                            questionRepository.getQuestionsByCategory(category)
+                    )
+            );
+        }
     }
 
     @FXML
