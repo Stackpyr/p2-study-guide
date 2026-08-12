@@ -1,73 +1,446 @@
 /**
- * Placeholder controller for the post-login landing scene. Doesn't do much yet. It's here so
- * onLoginClick can send the user somewhere and everyone else can build their scenes.
+ * Controller for the Account Administration scene. Lets an admin search accounts, suspend or
+ * reactivate them, reset a user's password, grant/revoke admin access, and delete accounts
+ * (blocked when the account has quiz history).
  *
  * @author: Jason Hamilton
- * @created: 7/31/2026
+ * @created: 8/8/2026
  * @since: 0.1.0
  */
 
 package UI;
 
+import Data.Account;
+import Data.AccountRepository;
+import Data.QuizAttemptRepository;
 import Service.AuthService;
+import java.security.SecureRandom;
+import java.util.List;
+import java.util.Optional;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
-public class DashboardController extends BaseController {
+public class AccountAdminController extends BaseController {
+
+  // printable ASCII only ('!' through '~') - anything below 33 is a control character
+  // (tab, escape, etc.) that has no business being in a password someone has to read and type
+  private static final int ASCII_PRINTABLE_START = 33;
+  private static final int ASCII_PRINTABLE_END = 126;
+  private static final int GENERATED_PASSWORD_LENGTH = 12;
+
+  private final AccountRepository accountRepository = new AccountRepository();
+  private final QuizAttemptRepository quizAttemptRepository = new QuizAttemptRepository();
+  private final ObservableList<Account> allAccounts = FXCollections.observableArrayList();
+  private final SecureRandom random = new SecureRandom();
 
   @FXML
-  public HBox titleBar;
+  private TextField searchField;
   @FXML
-  public Button logout;
+  private TableView<Account> accountsTable;
   @FXML
-  private Button takeQuizButton;
+  private TableColumn<Account, String> usernameColumn;
   @FXML
-  private Button manageAccountsButton;
+  private TableColumn<Account, String> emailColumn;
   @FXML
-  private Label statusText;
+  private TableColumn<Account, String> displayNameColumn;
+  @FXML
+  private TableColumn<Account, Boolean> activeColumn;
+  @FXML
+  private TableColumn<Account, Boolean> adminColumn;
+  @FXML
+  private TableColumn<Account, Void> actionsColumn;
+  @FXML
+  private Label statusLabel;
 
+  /**
+   * Initializes the scene and wires up the table columns.
+   */
   @Override
   @FXML
   protected void initialize() {
-    super.initialize(); // still need the title bar's sessionLabel set
+    super.initialize();
 
-    // everyone can take a quiz, but only admins get the Account Manager button -
-    // hide it entirely (not just disable it) so a non-admin doesn't even know it's there
-    boolean isAdmin = AuthService.getInstance().isAdmin();
-    manageAccountsButton.setVisible(isAdmin);
-    manageAccountsButton.setManaged(isAdmin);
+    // Explicit lambdas instead of PropertyValueFactory: PropertyValueFactory resolves getters
+    // reflectively from inside javafx.base, which requires opening the Data package to
+    // javafx.base in module-info.java. These call the getters directly from our own module, so
+    // no reflection - and no module-info change - is needed.
+    usernameColumn.setCellValueFactory(cellData ->
+        new SimpleStringProperty(cellData.getValue().getUsername()));
+    emailColumn.setCellValueFactory(cellData ->
+        new SimpleStringProperty(cellData.getValue().getEmailAddress()));
+    displayNameColumn.setCellValueFactory(cellData ->
+        new SimpleStringProperty(cellData.getValue().getDisplayName()));
+    activeColumn.setCellValueFactory(cellData ->
+        new SimpleBooleanProperty(cellData.getValue().getIsActive()));
+    adminColumn.setCellValueFactory(cellData ->
+        new SimpleBooleanProperty(cellData.getValue().getIsAdmin()));
+
+    activeColumn.setCellFactory(col -> statusBadgeCell("Active", "Suspended"));
+    adminColumn.setCellFactory(col -> statusBadgeCell("Admin", "User"));
+    actionsColumn.setCellFactory(col -> new ActionsCell());
+
+    FilteredList<Account> filteredAccounts = new FilteredList<>(allAccounts, account -> true);
+    searchField.textProperty().addListener((obs, oldText, newText) ->
+        filteredAccounts.setPredicate(account -> matchesSearch(account, newText)));
+
+    SortedList<Account> sortedAccounts = new SortedList<>(filteredAccounts);
+    sortedAccounts.comparatorProperty().bind(accountsTable.comparatorProperty());
+    accountsTable.setItems(sortedAccounts);
+
+    refreshAccounts(); // populate the grid as soon as the scene renders
   }
 
-  @FXML
-  protected void onTakeQuizClick(MouseEvent event) {
-    // TODO: once Question Bank / Quiz Engine has a scene, swap to it instead
-    // swapScene(event, SceneType.QUIZ);
-    statusText.setText("Quiz taking isn't built yet - check back soon!");
+  /**
+   * Reloads the account list from the database. Relies on
+   * {@code AccountRepository.getAllAccounts()}, which does not exist yet - see the note in the
+   * PR/chat about adding it. Until then this will throw at runtime.
+   */
+  private void refreshAccounts() {
+    List<Account> accounts = accountRepository.getAllAccounts();
+    allAccounts.setAll(accounts);
   }
 
-  @FXML
-  protected void onManageAccountsClick(MouseEvent event) {
-    // Only allow admins
-    if (!AuthService.getInstance().isAdmin()) {
+  /**
+   * Case-insensitive match against username, email, or display name.
+   *
+   * @param account the account to test
+   * @param query the search text currently in {@code searchField}; a blank or null query
+   *     matches everything
+   * @return true if the account should be shown for the given query
+   */
+  private boolean matchesSearch(Account account, String query) {
+    if (query == null || query.isBlank()) {
+      return true;
+    }
+    String needle = query.trim().toLowerCase();
+    return containsIgnoreCase(account.getUsername(), needle)
+        || containsIgnoreCase(account.getEmailAddress(), needle)
+        || containsIgnoreCase(account.getDisplayName(), needle);
+  }
+
+  /**
+   * Null-safe, case-insensitive substring check.
+   *
+   * @param haystack the string to search within; a null value never matches
+   * @param needle the already-lowercased text to search for
+   * @return true if haystack contains needle, ignoring case
+   */
+  private boolean containsIgnoreCase(String haystack, String needle) {
+    return haystack != null && haystack.toLowerCase().contains(needle);
+  }
+
+  /**
+   * Builds a plain-text badge cell for the Active/Admin boolean columns.
+   *
+   * @param whenTrue text to show when the column's value is true
+   * @param whenFalse text to show when the column's value is false
+   * @return a table cell that renders one of the two labels based on the row's value
+   */
+  private TableCell<Account, Boolean> statusBadgeCell(String whenTrue, String whenFalse) {
+    return new TableCell<>() {
+      @Override
+      protected void updateItem(Boolean value, boolean empty) {
+        super.updateItem(value, empty);
+        setText(empty || value == null ? null : (value ? whenTrue : whenFalse));
+      }
+    };
+  }
+
+  /**
+   * Updates the status label at the bottom of the scene.
+   *
+   * @param message the text to display
+   * @param isError true to style the message as an error (red); false for success (green)
+   */
+  private void setStatus(String message, boolean isError) {
+    statusLabel.setText(message);
+    statusLabel.setStyle(isError ? "-fx-text-fill: #b40b0b;" : "-fx-text-fill: #0b7a1f;");
+  }
+
+  /**
+   * Checks whether the given row belongs to the admin who's currently logged in, so
+   * self-service actions (suspend, revoke admin, delete) can be blocked.
+   *
+   * @param account the row's account
+   * @return true if account is the currently logged-in admin's own account
+   */
+  private boolean isCurrentAdmin(Account account) {
+    Account current = AuthService.getInstance().getCurrentAccount();
+    return current != null && current.getAccountId() == account.getAccountId();
+  }
+
+  /**
+   * Generates a new random password from the printable ASCII range.
+   *
+   * @return a newly generated password of {@link #GENERATED_PASSWORD_LENGTH} characters
+   */
+  private String generatePassword() {
+    int range = ASCII_PRINTABLE_END - ASCII_PRINTABLE_START + 1;
+    StringBuilder sb = new StringBuilder(GENERATED_PASSWORD_LENGTH);
+    for (int i = 0; i < GENERATED_PASSWORD_LENGTH; i++) {
+      sb.append((char) (ASCII_PRINTABLE_START + random.nextInt(range)));
+    }
+    return sb.toString();
+  }
+
+  /**
+   * Toggles an account's active status between suspended and reactivated.
+   *
+   * @param account the account whose status button was clicked
+   */
+  private void handleSuspendReactivate(Account account) {
+    if (isCurrentAdmin(account)) {
+      setStatus("You can't suspend your own account.", true);
       return;
     }
-    // TODO: once Account Manager has a scene, swap to it instead
-    // swapScene(event, SceneType.ACCOUNT_MANAGER);
-    statusText.setText("Account Manager isn't built yet - check back soon!");
+    boolean newStatus = !account.getIsActive();
+    accountRepository.updateStatus(account.getAccountId(), newStatus);
+    setStatus((newStatus ? "Reactivated " : "Suspended ") + account.getUsername() + ".", false);
+    refreshAccounts();
   }
 
+  /**
+   * Toggles an account's admin flag.
+   *
+   * @param account the account whose admin button was clicked
+   */
+  private void handleGrantRevokeAdmin(Account account) {
+    if (isCurrentAdmin(account)) {
+      setStatus("You can't change your own admin access.", true);
+      return;
+    }
+    boolean newAdmin = !account.getIsAdmin();
+    accountRepository.updateAdmin(account.getAccountId(), newAdmin);
+    setStatus((newAdmin ? "Granted admin access to " : "Revoked admin access from ")
+        + account.getUsername() + ".", false);
+    refreshAccounts();
+  }
+
+  /**
+   * Generates a new password for an account (after confirmation) and shows it to the admin so
+   * it can be relayed to the user, since there's no email-sending utility in this project yet.
+   *
+   * @param account the account whose password is being reset
+   */
+  private void handleResetPassword(Account account) {
+    Alert confirm = new Alert(AlertType.CONFIRMATION,
+        "Reset the password for " + account.getUsername() + "?", ButtonType.YES, ButtonType.NO);
+    Optional<ButtonType> result = confirm.showAndWait();
+    if (result.isEmpty() || result.get() != ButtonType.YES) {
+      return;
+    }
+
+    String newPassword = generatePassword();
+    // Reuse Account's own hashing logic so the hash/salt stay consistent with how every other
+    // password in the system gets stored.
+    Account holder = new Account(account.getEmailAddress(), account.getUsername());
+    holder.setPassword(newPassword);
+    accountRepository.updatePassword(account.getAccountId(), holder.getPasswordHash(),
+        holder.getPasswordSalt());
+
+    // TODO: there's no email-sending utility in this project yet, so the new password can't
+    // actually be emailed to the user. Showing it here instead so the admin can relay it
+    // manually until an EmailService (or similar) exists.
+    // Note: this password is permanent, not temporary - there's no forced-change-on-next-login
+    // flow, so whatever gets generated here is the user's password until it's reset again.
+    showGeneratedPasswordDialog(account.getUsername(), newPassword);
+
+    setStatus("Password reset for " + account.getUsername() + ".", false);
+  }
+
+  /**
+   * Shows the newly generated password in a read-only, monospaced, selectable field (with a
+   * one-click copy button) instead of plain alert text - alert content text can't be selected
+   * or copied, and the generated password can include easily-confused characters, so a
+   * copy/paste path matters more than usual here.
+   *
+   * @param username the account the password belongs to
+   * @param newPassword the newly generated password to display
+   */
+  private void showGeneratedPasswordDialog(String username, String newPassword) {
+    TextField passwordField = new TextField(newPassword);
+    passwordField.setEditable(false);
+    passwordField.setStyle("-fx-font-family: 'Consolas', 'Menlo', monospace; -fx-font-size: 16px;");
+    passwordField.setPrefColumnCount(newPassword.length());
+
+    Button copyButton = new Button("Copy");
+    copyButton.setOnAction(e -> {
+      ClipboardContent clipboardContent = new ClipboardContent();
+      clipboardContent.putString(newPassword);
+      Clipboard.getSystemClipboard().setContent(clipboardContent);
+    });
+
+    HBox passwordRow = new HBox(8.0, passwordField, copyButton);
+    passwordRow.setAlignment(Pos.CENTER_LEFT);
+
+    VBox content = new VBox(10.0,
+        new Label("New password for " + username + ":"),
+        passwordRow,
+        new Label("Email delivery isn't wired up yet - please share this with the user directly."));
+
+    Alert passwordAlert = new Alert(AlertType.INFORMATION);
+    passwordAlert.setHeaderText("Password Reset");
+    passwordAlert.getDialogPane().setContent(content);
+    passwordAlert.getButtonTypes().setAll(ButtonType.OK);
+
+    // pre-select the field's text so a sighted admin can just hit Ctrl+C immediately
+    passwordAlert.setOnShown(e -> {
+      passwordField.requestFocus();
+      passwordField.selectAll();
+    });
+
+    passwordAlert.showAndWait();
+  }
+
+  /**
+   * Deletes an account after confirmation, unless it has quiz history - in which case deletion
+   * is blocked and an error is shown instead.
+   *
+   * @param account the account whose delete button was clicked
+   */
+  private void handleDelete(Account account) {
+    if (isCurrentAdmin(account)) {
+      setStatus("You can't delete your own account.", true);
+      return;
+    }
+
+    List<?> attempts = quizAttemptRepository.getByAccountId(account.getAccountId());
+    if (attempts != null && !attempts.isEmpty()) {
+      setStatus(account.getUsername() + " has quiz history and can't be deleted.", true);
+      return;
+    }
+
+    Alert confirm = new Alert(AlertType.CONFIRMATION,
+        "Delete " + account.getUsername() + "? This can't be undone.", ButtonType.YES,
+        ButtonType.NO);
+    Optional<ButtonType> result = confirm.showAndWait();
+    if (result.isEmpty() || result.get() != ButtonType.YES) {
+      return;
+    }
+
+    accountRepository.deleteAccount(account.getAccountId());
+    setStatus("Deleted " + account.getUsername() + ".", false);
+    refreshAccounts();
+  }
+
+  /**
+   * Handles the "Back to Dashboard" button click.
+   *
+   * @param event the button click event
+   */
+  @FXML
+  protected void onBackClick(ActionEvent event) {
+    swapScene(event, SceneType.DASHBOARD);
+  }
+
+  /**
+   * Logs the current admin out and returns to the login scene.
+   *
+   * @param event the mouse click event
+   */
   @FXML
   protected void onLogoutClick(MouseEvent event) {
     AuthService.getInstance().logout();
     swapScene(event, SceneType.LOGIN);
   }
 
-  @FXML
-  protected void onQuizClick(MouseEvent event) {
-    swapScene(event, SceneType.QUIZ);
-  }
+  /**
+   * Renders the Suspend/Reactivate, Reset Password, Grant/Revoke Admin, and Delete actions for
+   * each row as small icon buttons with hover tooltips, so the column stays narrow.
+   */
+  private class ActionsCell extends TableCell<Account, Void> {
+    private static final String ICON_STYLE =
+        "-fx-font-size: 13px; -fx-padding: 2 6 2 6; -fx-min-width: 28px; -fx-cursor: hand;";
 
+    private final Button statusButton = iconButton("⏸"); // pause; becomes play (▶) when suspended
+    private final Button resetPasswordButton = iconButton("🔑"); // key
+    private final Button adminButton = iconButton("👑"); // crown
+    private final Button deleteButton = iconButton("🗑"); // wastebasket
+    private final HBox container = new HBox(4.0, statusButton, resetPasswordButton, adminButton,
+        deleteButton);
+
+    /**
+     * Wires each button in the row to its corresponding handler, resolving the row's account
+     * lazily at click time via {@link #getRowAccount()}.
+     */
+    ActionsCell() {
+      statusButton.setOnAction(e -> handleSuspendReactivate(getRowAccount()));
+      resetPasswordButton.setOnAction(e -> handleResetPassword(getRowAccount()));
+      adminButton.setOnAction(e -> handleGrantRevokeAdmin(getRowAccount()));
+      deleteButton.setOnAction(e -> handleDelete(getRowAccount()));
+
+      resetPasswordButton.setTooltip(new Tooltip("Reset Password"));
+      deleteButton.setTooltip(new Tooltip("Delete"));
+    }
+
+    /**
+     * Builds a compact, icon-only button styled to fit in a narrow table column.
+     *
+     * @param icon the glyph to display on the button
+     * @return a small icon button
+     */
+    private Button iconButton(String icon) {
+      Button button = new Button(icon);
+      button.setStyle(ICON_STYLE);
+      return button;
+    }
+
+    /**
+     * Looks up the account backing this cell's current row.
+     *
+     * @return the account for this row
+     */
+    private Account getRowAccount() {
+      return getTableView().getItems().get(getIndex());
+    }
+
+    /**
+     * Refreshes the row's buttons (icon and tooltip) to match the current account, or clears
+     * the cell entirely for empty/out-of-range rows.
+     *
+     * @param item unused - this column has no cell value, only row-level actions
+     * @param empty true if this cell no longer corresponds to a row
+     */
+    @Override
+    protected void updateItem(Void item, boolean empty) {
+      super.updateItem(item, empty);
+      if (empty || getIndex() < 0 || getIndex() >= getTableView().getItems().size()) {
+        setGraphic(null);
+        return;
+      }
+      Account account = getRowAccount();
+
+      boolean active = account.getIsActive();
+      statusButton.setText(active ? "⏸" : "▶"); // pause : play
+      statusButton.setTooltip(new Tooltip(active ? "Suspend" : "Reactivate"));
+
+      boolean admin = account.getIsAdmin();
+      adminButton.setStyle(ICON_STYLE + (admin ? " -fx-background-color: #ffe28a;" : ""));
+      adminButton.setTooltip(new Tooltip(admin ? "Revoke Admin" : "Grant Admin"));
+
+      setGraphic(container);
+    }
+  }
 }
