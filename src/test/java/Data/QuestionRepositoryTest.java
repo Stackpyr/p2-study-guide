@@ -60,7 +60,45 @@ class QuestionRepositoryTest {
     }
 
     /**
-     * A question can bee added and receives an ID
+     *
+     */
+    @Test
+    void getQuestionByCategory() {
+        Question testQ1 = createTestQuestion("What is Java?");
+        testQ1.setCategory("Object-Oriented Programming");
+        Question testQ2 = createTestQuestion("What SQL command adds a new row of data into a table?");
+        testQ2.setCategory("Databases");
+
+        repository.addQuestion(testQ1);
+        repository.addQuestion(testQ2);
+
+        List<Question> result = repository.getQuestionsByCategory("Object-Oriented Programming");
+
+        assertEquals(1, result.size());
+        assertEquals("What is Java?", result.get(0).getQuestionText());
+        assertEquals("Object-Oriented Programming", result.get(0).getCategory());
+    }
+
+    @Test
+    void getAllQuestionsByCategory() {
+        Question testQ1 = createTestQuestion("What is Java?");
+        testQ1.setCategory("Object-Oriented Programming");
+        Question testQ2 = createTestQuestion("What SQL command adds a new row of data into a table?");
+        testQ2.setCategory("Databases");
+
+        repository.addQuestion(testQ1);
+        repository.addQuestion(testQ2);
+
+        List<String> result = repository.getAllCategories();
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains("Object-Oriented Programming"));
+        assertTrue(result.contains("Databases"));
+
+    }
+
+    /**
+     * A question can be added and receives an ID
      */
     @Test
     void addQuestion() {

@@ -14,7 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
 /**
- *  Controller for QUestion Bank
+ *  Controller for Question Bank that shows a table of all questions with search and filter options.
  *
  * @author Analiza Boehning
  * @version 0.1.1
@@ -50,6 +50,14 @@ public class QuestionBankController extends BaseController {
         categoryColumn.setCellValueFactory(
                 new PropertyValueFactory<>("category"));
 
+        categoryChoiceBox.getItems().addAll(
+                "Object-Oriented Programming",
+                "Databases",
+                "Software Engineering"
+        );
+
+        categoryChoiceBox.setValue("All Categories");
+
         loadQuestions();
     }
 
@@ -63,7 +71,6 @@ public class QuestionBankController extends BaseController {
                 )
         );
     }
-
 
     @FXML
     public void onAddQuestionClicked(ActionEvent event) {
