@@ -59,9 +59,7 @@ public class DashboardController extends BaseController {
     if (!AuthService.getInstance().isAdmin()) {
       return;
     }
-    // TODO: once Account Manager has a scene, swap to it instead
-    // swapScene(event, SceneType.ACCOUNT_MANAGER);
-    statusText.setText("Account Manager isn't built yet - check back soon!");
+    swapScene(event, SceneType.ACCOUNT_ADMIN);
   }
 
   @FXML

@@ -7,9 +7,9 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UI.QuestionBankController">
     <top>
-        <HBox fx:id="titleBar" alignment="CENTER_LEFT" onMouseDragged="#onTitleBarDragged" onMousePressed="#onTitleBarPressed" prefHeight="32.0" style="-fx-background-color: #0b49b4;">
+        <HBox fx:id="titleBar" alignment="CENTER_LEFT" prefHeight="36.0" styleClass="title-bar">
             <padding>
-                <Insets left="10.0" right="10.0" />
+                <Insets left="14.0" right="6.0" />
             </padding>
             <Label text="Otter Do Better" textFill="WHITE" />
             <Region HBox.hgrow="ALWAYS" />
@@ -18,6 +18,23 @@
             <Button onAction="#onCloseClick" style="-fx-background-color: transparent; -fx-text-fill: white;" text="X" />
         </HBox>
     </top>
+
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="18.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+            </padding>
+            <children>
+                <Text id="lblTitle" fill="#0b49b4" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="page-title" text="Question Bank">
+                    <font>
+                        <Font size="24.0" />
+                    </font>
+                </Text>
+
+                <TableView VBox.vgrow="ALWAYS" />
+            </children>
+        </VBox>
+    </center>
     <center>
         <VBox alignment="CENTER" spacing="18.0" BorderPane.alignment="CENTER">
             <padding>
@@ -54,6 +71,23 @@
                 <Button onAction="#onAddQuestionClicked" text="Add Question" />
                 <Button fx:id="logout" mnemonicParsing="false" onMouseClicked="#onLogoutClick" text="Log Out" />
             </HBox>
+        </VBox>
+    </center>
+
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="18.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+            </padding>
+            <children>
+                <Text id="lblTitle" fill="#0b49b4" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="page-title" text="Question Bank">
+                    <font>
+                        <Font size="24.0" />
+                    </font>
+                </Text>
+
+                <TableView VBox.vgrow="ALWAYS" />
+            </children>
         </VBox>
     </center>
 </BorderPane>

@@ -3,99 +3,112 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ToggleGroup?>
-
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.skin.TabPaneSkin.TabControlButtons?>
-<?import javafx.scene.Group?>
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+
+<BorderPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="UI.AddQuestionController">
+
+    <fx:define>
+        <ToggleGroup fx:id="correctAnswer"/>
+    </fx:define>
+
     <top>
-        <HBox fx:id="titleBar" alignment="CENTER_LEFT" prefHeight="32.0" style="-fx-background-color: #0b49b4;">
+        <HBox fx:id="titleBar" alignment="CENTER_LEFT" prefHeight="36.0" styleClass="title-bar">
             <padding>
-                <Insets left="10.0" right="10.0" />
+                <Insets left="14.0" right="6.0" />
             </padding>
         </HBox>
     </top>
 
     <center>
-        <VBox alignment="CENTER" prefWidth="484.0" spacing="20.0">
-            <padding>
-                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
-            </padding>
-            <HBox alignment="TOP_CENTER" prefHeight="45.0" prefWidth="404.0">
-                <children>
-                    <Text id="lblTitle" fill="#0b49b4" strokeType="OUTSIDE" strokeWidth="0.0" text="Add a Question">
-                        <font>
-                            <Font size="24.0" />
-                        </font>
-                    </Text>
-                </children>
-            </HBox>
-            <VBox alignment="TOP_LEFT" prefHeight="45.0" prefWidth="404.0">
-                <children>
-                    <Label text="Question:" style="-fx-font-weight: bold">
-                    </Label>
-                    <TextArea fx:id="questionTextArea" prefWidth="500.0" prefHeight="120.0" promptText="Enter your question here" wrapText="true">
-                    </TextArea>
-                </children>
-            </VBox>
+        <StackPane>
+            <children>
+                <VBox alignment="CENTER" maxWidth="580.0" spacing="18.0" styleClass="card">
+                    <children>
+                        <Text fill="#0b49b4" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="page-title" text="Add a Question">
+                            <font>
+                                <Font size="26.0" />
+                            </font>
+                        </Text>
 
+                        <VBox alignment="TOP_LEFT" spacing="6.0">
+                            <children>
+                                <Label styleClass="field-label" text="Question" />
+                                <TextArea fx:id="questionTextArea" prefHeight="120.0" promptText="Enter your question here" wrapText="true" />
+                            </children>
+                        </VBox>
 
-            <VBox alignment="TOP_LEFT" prefHeight="45.0" prefWidth="404.0">
-                <Label contentDisplay="BOTTOM" alignment="TOP_LEFT" text="Choice A:" style="-fx-font-weight: bold">
-                </Label>
-                <TextField  fx:id="choiceA" prefHeight="26.0" maxWidth="800.0" promptText="Write something" />
+                        <VBox alignment="TOP_LEFT" spacing="10.0">
+                            <children>
+                                <VBox spacing="6.0">
+                                    <children>
+                                        <Label styleClass="field-label" text="Choice A" />
+                                        <TextField fx:id="choiceA" maxWidth="Infinity" promptText="Write something" />
+                                    </children>
+                                </VBox>
+                                <VBox spacing="6.0">
+                                    <children>
+                                        <Label styleClass="field-label" text="Choice B" />
+                                        <TextField fx:id="choiceB" maxWidth="Infinity" promptText="Write something" />
+                                    </children>
+                                </VBox>
+                                <VBox spacing="6.0">
+                                    <children>
+                                        <Label styleClass="field-label" text="Choice C" />
+                                        <TextField fx:id="choiceC" maxWidth="Infinity" promptText="Write something" />
+                                    </children>
+                                </VBox>
+                                <VBox spacing="6.0">
+                                    <children>
+                                        <Label styleClass="field-label" text="Choice D" />
+                                        <TextField fx:id="choiceD" maxWidth="Infinity" promptText="Write something" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
 
-                <Label contentDisplay="BOTTOM" alignment="TOP_LEFT" text="Choice B:" style="-fx-font-weight: bold">
-                </Label>
-                <TextField fx:id="choiceB" prefHeight="26.0" maxWidth="800.0" promptText="Write something" />
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <children>
+                                <Label styleClass="field-label" text="Category" />
+                                <ComboBox fx:id="categoryChoiceBox" prefWidth="200" />
+                            </children>
+                        </HBox>
 
-                <Label contentDisplay="BOTTOM" alignment="TOP_LEFT" text="Choice C:" style="-fx-font-weight: bold">
-                </Label>
-                <TextField fx:id="choiceC" prefHeight="26.0" maxWidth="800.0" promptText="Write something" />
+                        <VBox spacing="8.0">
+                            <children>
+                                <Label styleClass="field-label" text="Correct Answer"/>
+                                <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                    <children>
+                                        <RadioButton fx:id="radioA" text="Choice A" toggleGroup="$correctAnswer"/>
+                                        <RadioButton fx:id="radioB" text="Choice B" toggleGroup="$correctAnswer"/>
+                                        <RadioButton fx:id="radioC" text="Choice C" toggleGroup="$correctAnswer"/>
+                                        <RadioButton fx:id="radioD" text="Choice D" toggleGroup="$correctAnswer"/>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
 
-                <Label contentDisplay="BOTTOM" alignment="TOP_LEFT" text="Choice D:" style="-fx-font-weight: bold">
-                </Label>
-                <TextField fx:id="choiceD" prefHeight="26.0" maxWidth="800.0" promptText="Write something"  />
-            </VBox>
-            <HBox alignment="TOP_LEFT" spacing="10">
-                <Label text="Category:">
-                </Label>
-                <ComboBox fx:id="categoryChoiceBox" prefWidth="200">
-                </ComboBox>
-            </HBox>
-            <HBox alignment="TOP_LEFT" spacing="15.0">
-                <fx:define>
-                    <ToggleGroup fx:id="correctAnswer"/>
-                </fx:define>
-                <Label text="Correct Answer:"/>
-            </HBox>
-                <HBox alignment="TOP_LEFT" spacing="15.0">
-                    <RadioButton fx:id="radioA" text="Choice A" toggleGroup="$correctAnswer"/>
-                    <RadioButton fx:id="radioB" text="Choice B" toggleGroup="$correctAnswer"/>
-                    <RadioButton fx:id="radioC" text="Choice C" toggleGroup="$correctAnswer"/>
-                    <RadioButton fx:id="radioD" text="Choice D" toggleGroup="$correctAnswer"/>
-                </HBox>
-
-            <HBox alignment="CENTER" spacing="40">
-                <Button fx:id="Save" text="Save"  onAction="#onSaveClick">
-                </Button>
-                <Button fx:id="Cancel" text="Cancel" onAction="#onCancelClick">
-                </Button>
-            </HBox>
-        </VBox>
+                        <HBox alignment="CENTER" spacing="12">
+                            <children>
+                                <Button fx:id="Save" onAction="#onSaveClick" styleClass="btn-primary" text="Save" />
+                                <Button fx:id="Cancel" onAction="#onCancelClick" styleClass="btn-secondary" text="Cancel" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
     </center>
 
 </BorderPane>

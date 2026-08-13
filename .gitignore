@@ -220,3 +220,8 @@ gradle-app.setting
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,intellij+all,macos,maven,gradle,java
 /p2-study-guide.iml
+
+# Local Maven debug artifacts (should never be committed)
+effective-pom-debug.xml
+mvn-debug-output.txt
+/${project.build.directory}

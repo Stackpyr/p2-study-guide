@@ -13,10 +13,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AccountRepository {
 
   private final Connection conn;
+  private final String GET_ALL_ACCOUNTS_CMD = "SELECT * FROM account ORDER BY account_id";
   private final String GET_BY_ID_CMD = "SELECT * FROM account WHERE account_id = ?";
   private final String GET_BY_USERNAME_CMD = "SELECT * FROM account WHERE username = ?";
   private final String INSERT_CMD = "INSERT INTO account (username, email, password_hash, password_salt, display_name, is_active, is_admin) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -81,6 +84,24 @@ public class AccountRepository {
       System.out.println("Error: " + e.getMessage());
     }
     return null;
+  }
+
+  /**
+   * Retrieves all accounts from the database
+   * @return List of AccountDao objects with the accounts' information
+   */
+  public List<Account> getAllAccounts() {
+    List<Account> accounts = new ArrayList<>();
+    try (PreparedStatement selectStmt = conn.prepareStatement(GET_ALL_ACCOUNTS_CMD)) {
+      try (ResultSet rs = selectStmt.executeQuery()) {
+        while (rs.next()) {
+          accounts.add(mapRow(rs));
+        }
+      }
+    } catch (SQLException e) {
+      System.out.println("Error: " + e.getMessage());
+    }
+    return accounts;
   }
 
   /**

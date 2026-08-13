@@ -94,4 +94,11 @@ public class AuthService {
   public Account getCurrentAccount() {
     return currentAccount;
   }
+
+  /**
+   * Resets the singleton instance for testing purposes
+   */
+  public static void resetForTesting() {
+    instance = null;
+  }
 }
