@@ -10,6 +10,7 @@ package UI;
 
 import java.io.IOException;
 import java.util.function.Consumer;
+import java.io.UncheckedIOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 
@@ -51,9 +52,11 @@ public class SceneFactory {
         onLoad.accept(controller);
       }
 
+      scene.getStylesheets().add(SceneFactory.class.getResource("app.css").toExternalForm());
       return scene;
     } catch (IOException e) {
-      System.out.println("Error loading FXML: " + e.getMessage());
+      // throw so that the caller knows there was a problem loading the fxml
+      throw new UncheckedIOException("Error loading FXML for " + type + ": " + e.getMessage(), e);
     }
 
     return null;

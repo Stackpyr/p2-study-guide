@@ -341,6 +341,20 @@
       <artifactId>sqlite-jdbc</artifactId>
       <version>3.50.3.0</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.testfx</groupId>
+      <artifactId>testfx-junit5</artifactId>
+      <version>4.0.18</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.testfx</groupId>
+      <artifactId>openjfx-monocle</artifactId>
+      <version>jdk-12.0.1+2</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -367,13 +381,11 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.4</version>
         <configuration>
-          <!-- Our module-info.java makes this a named module, which makes
-               surefire try to run tests on the module path. That splits
-               junit-platform-launcher (unnamed module) from
-               junit-platform-commons (a real named module) across the
-               module boundary and JPMS blocks the cross-access. Running
-               tests on the plain classpath instead avoids that split. -->
           <useModulePath>false</useModulePath>
+          <!-- Point tests at the in-memory SQLite DB instead of the real file DB. -->
+          <systemPropertyVariables>
+            <app.dbUrl>jdbc:sqlite::memory:</app.dbUrl>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
 
@@ -384,9 +396,6 @@
         <configuration>
           <mainClass>UI.OtterDoBetterApplication</mainClass>
           <options>
-            <!-- javafx.graphics loads native libraries via System.load(),
-                 which the JVM flags as a restricted native-access call
-                 unless the module is explicitly granted permission. -->
             <option>--enable-native-access=javafx.graphics</option>
           </options>
         </configuration>
