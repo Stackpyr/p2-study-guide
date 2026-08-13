@@ -68,7 +68,7 @@
                      </children>
                   </HBox>
 
-                  <Button id="btnLinkedInLogin" fx:id="linkedInLogin" maxWidth="Infinity" onMouseClicked="#onLinkedInLoginClick" styleClass="btn-linkedin" text="LinkedIn" />
+                  <Button id="btnLinkedInLogin" fx:id="linkedInLogin" maxWidth="Infinity" onMouseClicked="#onLinkedInLoginClick" styleClass="btn-linkedin" text="Sign in with LinkedIn" />
                </children>
             </VBox>
          </children>
