@@ -11,7 +11,7 @@ package Data;
 import java.util.Objects;
 
 public class Question {
-    private int questionId;
+    private final int questionId;
     private String questionText;
     private String category;
     private String choiceA;
@@ -22,11 +22,13 @@ public class Question {
 
     // To be used when creating a new question
     public Question(String questionText) {
+        this.questionId = 0;
         this.questionText = questionText;
     }
 
     // To be used when creating a new question with a category
     public Question(String questionText, String category) {
+        this.questionId = 0;
         this.questionText = questionText;
         this.category = category;
     }
