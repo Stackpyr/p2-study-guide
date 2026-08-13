@@ -9,6 +9,7 @@
 package Utilities;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import javax.crypto.SecretKeyFactory;
@@ -20,16 +21,18 @@ public class Pdkdf2PasswordHasher implements PasswordHasher {
   public String generateSalt() {
     byte[] saltBytes = new byte[16];
     new java.security.SecureRandom().nextBytes(saltBytes);
-    return new String(saltBytes);
+    // Base64-encode the raw bytes to avoid loss of information when converting to a string.
+    return Base64.getEncoder().encodeToString(saltBytes);
   }
 
   @Override
   public String hashPassword(String password, String salt) {
     try {
-      KeySpec spec = new PBEKeySpec(password.toCharArray(), salt.getBytes(), 65536, 128);
+      KeySpec spec = new PBEKeySpec(password.toCharArray(), Base64.getDecoder().decode(salt), 65536, 128);
       SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
       byte[] hash = factory.generateSecret(spec).getEncoded();
-      return new String(hash);
+      // Same issue as generateSalt(): encode raw bytes as Base64
+      return Base64.getEncoder().encodeToString(hash);
     } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
       System.out.println("Error hashing password: " + e.getMessage());
     }

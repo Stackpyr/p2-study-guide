@@ -374,6 +374,10 @@
                module boundary and JPMS blocks the cross-access. Running
                tests on the plain classpath instead avoids that split. -->
           <useModulePath>false</useModulePath>
+          <!-- Point tests at the in-memory SQLite DB instead of the real file DB. -->
+          <systemPropertyVariables>
+            <app.dbUrl>jdbc:sqlite::memory:</app.dbUrl>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
 
