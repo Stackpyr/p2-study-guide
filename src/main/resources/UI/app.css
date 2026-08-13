@@ -111,6 +111,24 @@
   -fx-background-color: rgba(11, 73, 180, 0.08);
 }
 
+`.btn-linkedin {
+  -fx-background-color: #0a66c2;
+  -fx-text-fill: white;
+  -fx-font-size: 13px;
+  -fx-font-weight: bold;
+  -fx-background-radius: 8;
+  -fx-padding: 10 26 10 26;
+  -fx-cursor: hand;
+}
+
+.btn-linkedin:hover {
+  -fx-background-color: #084e96;
+}
+
+.btn-linkedin:pressed {
+  -fx-background-color: #063a71;
+}
+
 .btn-link {
   -fx-background-color: transparent;
   -fx-text-fill: #6b7280;

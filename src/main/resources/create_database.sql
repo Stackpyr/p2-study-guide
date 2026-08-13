@@ -7,11 +7,17 @@ CREATE TABLE IF NOT EXISTS account (
                                        password_hash    TEXT,
                                        password_salt    TEXT,
                                        display_name     TEXT,
+                                       oauth_provider   TEXT,
+                                       oauth_subject    TEXT,
                                        is_active        INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0, 1)),
                                        is_admin         INTEGER NOT NULL DEFAULT 0 CHECK (is_admin IN (0, 1)),
                                        created_at       TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
                                        updated_at       TEXT NOT NULL DEFAULT (CURRENT_TIMESTAMP),
-                                       CHECK (password_hash IS NOT NULL AND password_salt IS NOT NULL)
+                                       CHECK (
+                                         (password_hash IS NOT NULL AND password_salt IS NOT NULL)
+                                         OR oauth_provider IS NOT NULL
+                                       ),
+                                       UNIQUE (oauth_provider, oauth_subject)
 );
 
 CREATE INDEX IF NOT EXISTS idx_account_username ON account (username);

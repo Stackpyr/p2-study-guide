@@ -67,6 +67,8 @@
                         <Button id="btnRegister" fx:id="register" mnemonicParsing="false" onMouseClicked="#onRegisterClick" styleClass="btn-secondary" text="Register" />
                      </children>
                   </HBox>
+
+                  <Button id="btnLinkedInLogin" fx:id="linkedInLogin" maxWidth="Infinity" onMouseClicked="#onLinkedInLoginClick" styleClass="btn-linkedin" text="LinkedIn" />
                </children>
             </VBox>
          </children>

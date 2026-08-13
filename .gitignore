@@ -225,3 +225,6 @@ gradle-app.setting
 effective-pom-debug.xml
 mvn-debug-output.txt
 /${project.build.directory}
+
+# Client id/secrets for the social auth providers (not to be committed due to the sensitive nature of it)
+src/main/resources/oauth.properties

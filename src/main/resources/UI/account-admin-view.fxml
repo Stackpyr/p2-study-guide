@@ -63,6 +63,7 @@
             <TableColumn fx:id="usernameColumn" prefWidth="120.0" text="Username"/>
             <TableColumn fx:id="emailColumn" prefWidth="160.0" text="Email"/>
             <TableColumn fx:id="displayNameColumn" prefWidth="120.0" text="Display Name"/>
+            <TableColumn fx:id="accountTypeColumn" prefWidth="90.0" text="Sign-in"/>
             <TableColumn fx:id="activeColumn" prefWidth="80.0" text="Status"/>
             <TableColumn fx:id="adminColumn" prefWidth="70.0" text="Role"/>
             <TableColumn fx:id="actionsColumn" prefWidth="150.0" text="Actions"/>
