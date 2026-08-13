@@ -13,11 +13,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.Scene;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * Controls the Quiz scene.
@@ -84,9 +86,7 @@ public class QuizController extends BaseController {
 
         if (questions.isEmpty()) {
             questionNumberLabel.setText("No questions available");
-            questionTextLabel.setText(
-                    "Add questions to the Question Bank first."
-            );
+            questionTextLabel.setText("Add questions to the Question Bank first.");
 
             answerA.setVisible(false);
             answerB.setVisible(false);
@@ -110,10 +110,7 @@ public class QuizController extends BaseController {
     private void showCurrentQuestion() {
         Question question = questions.get(currentQuestionIndex);
 
-        questionNumberLabel.setText(
-                "Question " + (currentQuestionIndex + 1)
-                        + " of " + questions.size()
-        );
+        questionNumberLabel.setText("Question " + (currentQuestionIndex + 1) + " of " + questions.size());
 
         questionTextLabel.setText(question.getQuestionText());
 
@@ -130,9 +127,7 @@ public class QuizController extends BaseController {
         restoreSavedAnswer();
 
         previousButton.setDisable(currentQuestionIndex == 0);
-        nextButton.setDisable(
-                currentQuestionIndex == questions.size() - 1
-        );
+        nextButton.setDisable(currentQuestionIndex == questions.size() - 1);
 
         statusLabel.setText("Select one answer.");
     }
@@ -150,10 +145,7 @@ public class QuizController extends BaseController {
                         .getUserData()
                         .toString();
 
-        selectedAnswers.put(
-                currentQuestionIndex,
-                selectedAnswer
-        );
+        selectedAnswers.put(currentQuestionIndex, selectedAnswer);
     }
 
     /**
@@ -227,24 +219,23 @@ public class QuizController extends BaseController {
                 new QuizAttempt(accountId, questions.size());
 
         attempt.setScore(score);
-        attempt.setCompletedAt(
-                LocalDateTime.now().toString()
-        );
+        attempt.setCompletedAt(LocalDateTime.now().toString());
 
         return quizAttemptRepository.addQuizAttempt(attempt)
                 != null;
     }
 
     /**
-     * Grades the quiz when it is submitted.
+     * Grades, saves, and displays the quiz results.
      */
     @FXML
-    protected void onSubmitClick() {
+    protected void onSubmitClick(ActionEvent event) {
         saveCurrentAnswer();
 
         if (!quizService.isComplete(questions.size(), selectedAnswers)) {
 
-            Alert warningAlert = new Alert(Alert.AlertType.WARNING);
+            Alert warningAlert =
+                    new Alert(Alert.AlertType.WARNING);
 
             warningAlert.setTitle("Incomplete Quiz");
             warningAlert.setHeaderText("Please answer every question.");
@@ -255,53 +246,37 @@ public class QuizController extends BaseController {
             return;
         }
 
-        int score = quizService.calculateScore(
-                questions,
-                selectedAnswers
-        );
-
-        double percentage =
-                quizService.calculatePercentage(
-                        score,
-                        questions.size()
-                );
+        int score = quizService.calculateScore(questions, selectedAnswers);
 
         if (!saveQuizAttempt(score)) {
-            Alert errorAlert =
-                    new Alert(Alert.AlertType.ERROR);
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
 
             errorAlert.setTitle("Save Error");
-            errorAlert.setHeaderText("The quiz could not be saved."
-            );
-            errorAlert.setContentText("Please return to the dashboard " + "and try again."
-            );
+            errorAlert.setHeaderText("The quiz could not be saved.");
+            errorAlert.setContentText("Please return to the dashboard and try again.");
 
             errorAlert.showAndWait();
             statusLabel.setText("Quiz was not saved.");
             return;
         }
 
-        boolean perfectScore =
-                score == questions.size();
+        submitButton.setDisable(true);
 
-        Alert resultAlert =
-                new Alert(Alert.AlertType.INFORMATION);
+        Scene resultScene = SceneFactory.loadResults(score, questions.size());
 
-        if (perfectScore) {
-            resultAlert.setTitle("Perfect Score!");
-            resultAlert.setHeaderText("Congratulations!");
-        } else {
-            resultAlert.setTitle("Quiz Results");
-            resultAlert.setHeaderText("Quiz complete.");
+        if (resultScene == null) {
+            Alert errorAlert =
+                    new Alert(Alert.AlertType.ERROR);
+
+            errorAlert.setTitle("Scene Error");
+            errorAlert.setHeaderText("The Results scene could not be opened.");
+            errorAlert.setContentText("Your quiz was saved, but the Results scene could not be opened. Return to the Dashboard.");
+            errorAlert.showAndWait();
+            swapScene(event, SceneType.DASHBOARD);
+            return;
         }
 
-        resultAlert.setContentText("Score: " + score + " out of " + questions.size() + "\nPercentage: " + String.format("%.1f", percentage) + "%"
-        );
-
-        resultAlert.showAndWait();
-
-        statusLabel.setText("Quiz submitted.");
-        submitButton.setDisable(true);
+        stageOf(event).setScene(resultScene);
     }
 
     /**

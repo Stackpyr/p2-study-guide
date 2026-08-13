@@ -14,6 +14,7 @@ public enum SceneType {
   REGISTER("register-view.fxml"),
   DASHBOARD("dashboard-view.fxml"),
   QUIZ("quiz-view.fxml"),
+  RESULT("result-view.fxml");
   ACCOUNT_ADMIN("account-admin-view.fxml");
 
   private final String fxml;
