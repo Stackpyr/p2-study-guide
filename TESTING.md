@@ -71,3 +71,40 @@ generate connections to bad connection strings and other things that would fail.
 * testEquals_differentUsername_isNotEqual was corrected since it wasn't passing. 
 * Implemented my own tests in DatabaseManagerTest.java since Claude didn't generate any. This was probably an issue with my prompt.
 * Implemented three tests in AccountRepositoryTest.java since Claude didn't generate any: updatePassword(), updateAdmin(), and updateStatus().
+
+
+
+# Sawyer's AI-Assisted Quiz Engine Tests
+
+AI tool used: OpenAI ChatGPT
+
+ 1. The Prompt
+
+- Create simple JUnit 5 tests for QuizAttemptRepository and QuizService. Test adding, reading, updating, and deleting quiz attempts, finding attempts by account ID, checking completed and incomplete quizzes, calculating scores, and calculating percentages.
+
+ 2. What the AI Produced
+
+ - AI helped draft tests for:
+
+- `QuizAttemptRepositoryTest.java`
+  - Add and read a quiz attempt
+  - Find attempts by account ID
+  - Update a quiz attempt
+  - Delete a quiz attempt
+
+- `QuizServiceTest.java`
+  - Complete and incomplete quizzes
+  - Blank answers
+  - Perfect and partial scores
+  - Percentage calculations
+  - Zero-question quizzes
+
+ 3. My Evaluation
+
+ - The tests covered the main Quiz Engine database and scoring methods. I reviewed the tests to make sure they matched the project. All tests passed.
+
+ 4. What I Changed
+
+ - I checked the package names, imports, methods, and test locations. I also ran the full Maven test suite.
+ - I added `QuizViewTest.java`, which uses TestFX to click the Back to Dashboard button and verify that the Dashboard opens.
+ - All 55 tests passed with 0 failures and 0 errors.
