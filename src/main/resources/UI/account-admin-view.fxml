@@ -19,30 +19,27 @@
     <VBox>
       <children>
         <HBox fx:id="titleBar" alignment="CENTER_LEFT" onMouseDragged="#onTitleBarDragged"
-          onMousePressed="#onTitleBarPressed" prefHeight="32.0" style="-fx-background-color: #0b49b4;">
+          onMousePressed="#onTitleBarPressed" prefHeight="36.0" styleClass="title-bar">
           <padding>
-            <Insets left="10.0" right="10.0"/>
+            <Insets left="14.0" right="6.0"/>
           </padding>
           <children>
-            <Label text="Otter Do Better" textFill="WHITE"/>
+            <Label styleClass="title-bar-label" text="Otter Do Better"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="sessionLabel" text="Not logged in" textFill="WHITE"
-              style="-fx-font-size: 11px; -fx-padding: 0 10 0 0;"/>
-            <Button onAction="#onMinimizeClick"
-              style="-fx-background-color: transparent; -fx-text-fill: white;" text="_"/>
-            <Button onAction="#onCloseClick"
-              style="-fx-background-color: transparent; -fx-text-fill: white;" text="X"/>
+            <Label fx:id="sessionLabel" styleClass="title-bar-session-label" text="Not logged in"/>
+            <Button onAction="#onMinimizeClick" styleClass="title-bar-button" text="_"/>
+            <Button onAction="#onCloseClick" styleClass="title-bar-button" text="X"/>
           </children>
         </HBox>
 
-        <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #f2f2f2;">
+        <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="toolbar-strip">
           <padding>
-            <Insets bottom="12.0" left="20.0" right="20.0" top="12.0"/>
+            <Insets bottom="14.0" left="20.0" right="20.0" top="14.0"/>
           </padding>
           <children>
             <TextField fx:id="searchField" promptText="Search by username, email, or display name"
               HBox.hgrow="ALWAYS"/>
-            <Button onAction="#onBackClick" text="Back to Dashboard"/>
+            <Button onAction="#onBackClick" styleClass="btn-secondary" text="Back to Dashboard"/>
           </children>
         </HBox>
       </children>
@@ -50,12 +47,12 @@
   </top>
 
   <center>
-    <VBox spacing="12.0" BorderPane.alignment="CENTER">
+    <VBox spacing="14.0" BorderPane.alignment="CENTER">
       <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
       </padding>
       <children>
-        <Text fill="#0b49b4" strokeType="OUTSIDE" strokeWidth="0.0" text="Account Administration">
+        <Text fill="#0b49b4" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="page-title" text="Account Administration">
           <font>
             <Font size="24.0"/>
           </font>
@@ -72,7 +69,7 @@
           </columns>
         </TableView>
 
-        <Label fx:id="statusLabel" wrapText="true"/>
+        <Label fx:id="statusLabel" styleClass="page-subtitle" wrapText="true"/>
       </children>
     </VBox>
   </center>

@@ -26,11 +26,14 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -40,8 +43,14 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class AccountAdminController extends BaseController {
 
@@ -203,7 +212,7 @@ public class AccountAdminController extends BaseController {
    *
    * @param account the account whose status button was clicked
    */
-  private void handleSuspendReactivate(Account account) {
+  private void suspendReactivate(Account account) {
     if (isCurrentAdmin(account)) {
       setStatus("You can't suspend your own account.", true);
       return;
@@ -219,7 +228,7 @@ public class AccountAdminController extends BaseController {
    *
    * @param account the account whose admin button was clicked
    */
-  private void handleGrantRevokeAdmin(Account account) {
+  private void grantRevokeAdmin(Account account) {
     if (isCurrentAdmin(account)) {
       setStatus("You can't change your own admin access.", true);
       return;
@@ -232,79 +241,120 @@ public class AccountAdminController extends BaseController {
   }
 
   /**
-   * Generates a new password for an account and shows it to the admin so
-   * it can be relayed to the user. Note, there is no email functionality in this application yet.
+   * Lets the admin set a new password for an account - either typed in directly or generated -
+   * then saves it. Note: there is no email functionality in this application yet (or likely ever), so the admin
+   * has to relay the password to the user some other way.
    *
    * @param account the account whose password is being reset
    */
-  private void handleResetPassword(Account account) {
-    Alert confirm = new Alert(AlertType.CONFIRMATION,
-        "Reset the password for " + account.getUsername() + "?", ButtonType.YES, ButtonType.NO);
-    Optional<ButtonType> result = confirm.showAndWait();
-    if (result.isEmpty() || result.get() != ButtonType.YES) {
+  private void resetPassword(Account account) {
+    Optional<String> chosen = promptForPassword(account.getUsername());
+    if (chosen.isEmpty()) {
+      return; // cancelled
+    }
+    String newPassword = chosen.get();
+    if (newPassword.isBlank()) {
+      setStatus("Password can't be blank.", true);
       return;
     }
 
-    String newPassword = generatePassword();
     // Reuse Account's own hashing logic to make it easy and consistent
     Account acct = new Account(account.getEmailAddress(), account.getUsername());
     acct.setPassword(newPassword);
     accountRepository.updatePassword(account.getAccountId(), acct.getPasswordHash(),
         acct.getPasswordSalt());
 
-    // show password to admin (can't email yet)
-    showGeneratedPasswordDialog(account.getUsername(), newPassword);
-
-    setStatus("Password reset for " + account.getUsername() + ".", false);
+    setStatus("Password reset for " + account.getUsername(), false);
   }
 
   /**
-   * Shows the newly generated password in a read-only field so it can be copied/pasted
+   * Shows a dialog to manage the user's password (generate a new one or type one in)
    *
-   * @param username the account the password belongs to
-   * @param newPassword the newly generated password to display
+   * @param username the account the password is being set for
+   * @return the password the admin chose
    */
-  private void showGeneratedPasswordDialog(String username, String newPassword) {
-    TextField passwordField = new TextField(newPassword);
-    passwordField.setEditable(false);
-    passwordField.setStyle("-fx-font-family: 'Consolas', 'Menlo', monospace; -fx-font-size: 16px;");
-    passwordField.setPrefColumnCount(newPassword.length());
+  private Optional<String> promptForPassword(String username) {
+    Dialog<String> dialog = new Dialog<>();
+    dialog.setTitle("Password Reset"); // not visible
+    dialog.initStyle(StageStyle.UNDECORATED);
+    if (statusLabel.getScene() != null) {
+      dialog.initOwner(statusLabel.getScene().getWindow());
+    }
 
-    Button copyButton = new Button("Copy");
-    copyButton.setOnAction(e -> {
-      ClipboardContent clipboardContent = new ClipboardContent();
-      clipboardContent.putString(newPassword);
-      Clipboard.getSystemClipboard().setContent(clipboardContent);
+    // Custom title bar
+    Label titleLabel = new Label("Password Reset");
+    titleLabel.setTextFill(Color.WHITE);
+    Button closeButton = new Button("X");
+    closeButton.setStyle("-fx-background-color: transparent; -fx-text-fill: white;");
+    closeButton.setOnAction(e -> {
+      dialog.setResult(null);
+      dialog.hide();
+    });
+    HBox titleBar = new HBox(titleLabel, new Region(), closeButton);
+    HBox.setHgrow(titleBar.getChildren().get(1), Priority.ALWAYS); // spacer pushes X to the right
+    titleBar.setAlignment(Pos.CENTER_LEFT);
+    titleBar.setPrefHeight(32.0);
+    titleBar.setPadding(new Insets(0, 10, 0, 10));
+    titleBar.setStyle("-fx-background-color: #0b49b4;");
+
+    // dragging the title bar moves the dialog's window
+    double[] dragOffset = new double[2];
+    titleBar.setOnMousePressed(e -> {
+      dragOffset[0] = e.getSceneX();
+      dragOffset[1] = e.getSceneY();
+    });
+    titleBar.setOnMouseDragged(e -> {
+      Stage stage = (Stage) dialog.getDialogPane().getScene().getWindow();
+      stage.setX(e.getScreenX() - dragOffset[0]);
+      stage.setY(e.getScreenY() - dragOffset[1]);
     });
 
-    HBox passwordRow = new HBox(8.0, passwordField, copyButton);
-    passwordRow.setAlignment(Pos.CENTER_LEFT);
+    TextField passwordField = new TextField();
+    passwordField.setPromptText("Type a password, or click Generate");
+    passwordField.setStyle("-fx-font-family: 'Consolas', 'Menlo', monospace; -fx-font-size: 16px;");
+    passwordField.setPrefColumnCount(GENERATED_PASSWORD_LENGTH);
 
-    VBox content = new VBox(10.0,
-        new Label("New password for " + username + ":"),
-        passwordRow);
-
-    Alert passwordAlert = new Alert(AlertType.INFORMATION);
-    passwordAlert.setHeaderText("Password Reset");
-    passwordAlert.getDialogPane().setContent(content);
-    passwordAlert.getButtonTypes().setAll(ButtonType.OK);
-
-    // pre-select the field's text (makes it easier to just do ctrl+c)
-    passwordAlert.setOnShown(e -> {
+    Button generateButton = new Button("Generate");
+    generateButton.setOnAction(e -> {
+      passwordField.setText(generatePassword());
       passwordField.requestFocus();
       passwordField.selectAll();
     });
 
-    passwordAlert.showAndWait();
+    Button copyButton = new Button("Copy");
+    copyButton.setOnAction(e -> {
+      ClipboardContent clipboardContent = new ClipboardContent();
+      clipboardContent.putString(passwordField.getText());
+      Clipboard.getSystemClipboard().setContent(clipboardContent);
+    });
+
+    HBox passwordRow = new HBox(8.0, passwordField, generateButton, copyButton);
+    passwordRow.setAlignment(Pos.CENTER_LEFT);
+
+    VBox body = new VBox(10.0,
+        new Label("New password for " + username + ":"),
+        passwordRow);
+    body.setPadding(new Insets(20.0));
+
+    BorderPane content = new BorderPane();
+    content.setTop(titleBar);
+    content.setCenter(body);
+    dialog.getDialogPane().setContent(content);
+
+    ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+    dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+    dialog.setResultConverter(
+        buttonType -> buttonType == saveButtonType ? passwordField.getText() : null);
+
+    return dialog.showAndWait();
   }
 
   /**
-   * Deletes an account after confirmation, unless it has quiz history. In that case, deletion
-   * is blocked and an error is shown.
+   * Deletes an account unless it has quiz history which displays an error
    *
    * @param account the account whose delete button was clicked
    */
-  private void handleDelete(Account account) {
+  private void delete(Account account) {
     if (isCurrentAdmin(account)) {
       setStatus("You can't delete your own account.", true);
       return;
@@ -330,7 +380,7 @@ public class AccountAdminController extends BaseController {
   }
 
   /**
-   * Handles the "Back to Dashboard" button click.
+   * "Back to Dashboard" button click
    *
    * @param event the button click event
    */
@@ -340,7 +390,7 @@ public class AccountAdminController extends BaseController {
   }
 
   /**
-   * Logs the current admin out and returns to the login scene.
+   * Logs the current admin out and returns to the login scene
    *
    * @param event the mouse click event
    */
@@ -351,7 +401,7 @@ public class AccountAdminController extends BaseController {
   }
 
   /**
-   * Renders the Suspend/Reactivate, Reset Password, Grant/Revoke Admin, and Delete butons
+   * Draws the Suspend/Reactivate, Reset Password, Grant/Revoke Admin, and Delete buttons
    */
   private class ActionsCell extends TableCell<Account, Void> {
     private static final String ICON_STYLE =
@@ -368,10 +418,10 @@ public class AccountAdminController extends BaseController {
      * Wires up each button to their respective handlers
      */
     ActionsCell() {
-      statusButton.setOnAction(e -> handleSuspendReactivate(getRowAccount()));
-      resetPasswordButton.setOnAction(e -> handleResetPassword(getRowAccount()));
-      adminButton.setOnAction(e -> handleGrantRevokeAdmin(getRowAccount()));
-      deleteButton.setOnAction(e -> handleDelete(getRowAccount()));
+      statusButton.setOnAction(e -> suspendReactivate(getRowAccount()));
+      resetPasswordButton.setOnAction(e -> resetPassword(getRowAccount()));
+      adminButton.setOnAction(e -> grantRevokeAdmin(getRowAccount()));
+      deleteButton.setOnAction(e -> delete(getRowAccount()));
 
       resetPasswordButton.setTooltip(new Tooltip("Reset Password"));
       deleteButton.setTooltip(new Tooltip("Delete"));
