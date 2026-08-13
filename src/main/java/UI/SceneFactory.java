@@ -59,7 +59,6 @@ public class SceneFactory {
       throw new UncheckedIOException("Error loading FXML for " + type + ": " + e.getMessage(), e);
     }
 
-    return null;
   }
 
   /**
