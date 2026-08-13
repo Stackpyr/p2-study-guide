@@ -224,3 +224,4 @@ gradle-app.setting
 # Local Maven debug artifacts (should never be committed)
 effective-pom-debug.xml
 mvn-debug-output.txt
+/${project.build.directory}

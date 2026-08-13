@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
@@ -18,81 +19,92 @@
 <BorderPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="UI.RegisterController">
   <top>
     <!-- Custom title bar - just because it looks better -->
-    <HBox fx:id="titleBar" alignment="CENTER_LEFT" onMouseDragged="#onTitleBarDragged" onMousePressed="#onTitleBarPressed" prefHeight="32.0" style="-fx-background-color: #0b49b4;">
+    <HBox fx:id="titleBar" alignment="CENTER_LEFT" onMouseDragged="#onTitleBarDragged" onMousePressed="#onTitleBarPressed" prefHeight="36.0" styleClass="title-bar">
       <padding>
-        <Insets left="10.0" right="10.0" />
+        <Insets left="14.0" right="6.0" />
       </padding>
       <children>
-        <Label text="Otter Do Better" textFill="WHITE" />
+        <Label styleClass="title-bar-label" text="Otter Do Better" />
         <Region HBox.hgrow="ALWAYS" />
-        <Label fx:id="sessionLabel" text="Not logged in" textFill="WHITE" style="-fx-font-size: 11px; -fx-padding: 0 10 0 0;" />
-        <Button onAction="#onMinimizeClick" style="-fx-background-color: transparent; -fx-text-fill: white;" text="_" />
-        <Button onAction="#onCloseClick" style="-fx-background-color: transparent; -fx-text-fill: white;" text="X" />
+        <Label fx:id="sessionLabel" styleClass="title-bar-session-label" text="Not logged in" />
+        <Button onAction="#onMinimizeClick" styleClass="title-bar-button" text="_" />
+        <Button onAction="#onCloseClick" styleClass="title-bar-button" text="X" />
       </children>
     </HBox>
   </top>
   <center>
-    <VBox alignment="CENTER" spacing="18.0" BorderPane.alignment="CENTER">
-      <padding>
-        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
-      </padding>
+    <StackPane>
       <children>
-        <Text id="lblTitle" fill="#0b49b4" strokeType="OUTSIDE" strokeWidth="0.0" text="Register New Account">
-          <font>
-            <Font size="24.0" />
-          </font>
-        </Text>
-
-        <GridPane hgap="20.0" vgap="14.0">
-          <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
-          </columnConstraints>
-          <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-          </rowConstraints>
+        <VBox alignment="CENTER" maxWidth="580.0" spacing="24.0" styleClass="card">
           <children>
-            <Label contentDisplay="BOTTOM" text="Display Name" GridPane.columnIndex="0" GridPane.rowIndex="0">
-              <graphic>
-                <TextField id="txtDisplayName" fx:id="displayName" alignment="CENTER" prefHeight="26.0" prefWidth="200.0" promptText="Enter your name" />
-              </graphic>
-            </Label>
-            <Label contentDisplay="BOTTOM" text="Username" GridPane.columnIndex="1" GridPane.rowIndex="0">
-              <graphic>
-                <TextField id="txtUsername" fx:id="username" alignment="CENTER" prefHeight="26.0" prefWidth="200.0" promptText="Choose a username" />
-              </graphic>
-            </Label>
+            <VBox alignment="CENTER" spacing="6.0">
+              <children>
+                <Text fill="#0b49b4" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="page-title" text="Create your account">
+                  <font>
+                    <Font size="26.0" />
+                  </font>
+                </Text>
+                <Text styleClass="page-subtitle" text="Join Otter Do Better to start building study guides" />
+              </children>
+            </VBox>
 
-            <Label contentDisplay="BOTTOM" text="Email Address" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1">
-              <graphic>
-                <TextField id="txtEmail" fx:id="email" alignment="CENTER" prefHeight="26.0" prefWidth="420.0" promptText="Enter your email" />
-              </graphic>
-            </Label>
+            <GridPane hgap="20.0" vgap="18.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="50.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="50.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+              <children>
+                <VBox spacing="6.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                  <children>
+                    <Label styleClass="field-label" text="Display Name" />
+                    <TextField id="txtDisplayName" fx:id="displayName" maxWidth="Infinity" promptText="Enter your name" />
+                  </children>
+                </VBox>
+                <VBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                  <children>
+                    <Label styleClass="field-label" text="Username" />
+                    <TextField id="txtUsername" fx:id="username" maxWidth="Infinity" promptText="Choose a username" />
+                  </children>
+                </VBox>
 
-            <Label contentDisplay="BOTTOM" text="Password" GridPane.columnIndex="0" GridPane.rowIndex="2">
-              <graphic>
-                <PasswordField id="txtPassword" fx:id="password" alignment="CENTER" prefHeight="26.0" prefWidth="200.0" promptText="Create a password" />
-              </graphic>
-            </Label>
-            <Label contentDisplay="BOTTOM" text="Confirm Password" GridPane.columnIndex="1" GridPane.rowIndex="2">
-              <graphic>
-                <PasswordField id="txtConfirmPassword" fx:id="confirmPassword" alignment="CENTER" prefHeight="26.0" prefWidth="200.0" promptText="Re-enter your password" />
-              </graphic>
-            </Label>
+                <VBox spacing="6.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                  <children>
+                    <Label styleClass="field-label" text="Email Address" />
+                    <TextField id="txtEmail" fx:id="email" maxWidth="Infinity" promptText="Enter your email" />
+                  </children>
+                </VBox>
+
+                <VBox spacing="6.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                  <children>
+                    <Label styleClass="field-label" text="Password" />
+                    <PasswordField id="txtPassword" fx:id="password" maxWidth="Infinity" promptText="Create a password" />
+                  </children>
+                </VBox>
+                <VBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <children>
+                    <Label styleClass="field-label" text="Confirm Password" />
+                    <PasswordField id="txtConfirmPassword" fx:id="confirmPassword" maxWidth="Infinity" promptText="Re-enter your password" />
+                  </children>
+                </VBox>
+              </children>
+            </GridPane>
+
+            <Label fx:id="errorText" id="lblErrorText" maxWidth="480.0" styleClass="error-label" textAlignment="CENTER" wrapText="true" />
+
+            <HBox alignment="CENTER" spacing="12.0">
+              <children>
+                <Button id="btnCreateAccount" fx:id="createAccount" mnemonicParsing="false" onMouseClicked="#onCreateAccountClick" styleClass="btn-primary" text="Create Account" />
+                <Button id="btnBackToLogin" fx:id="backToLogin" mnemonicParsing="false" onMouseClicked="#onBackToLoginClick" styleClass="btn-secondary" text="Back to Login" />
+              </children>
+            </HBox>
           </children>
-        </GridPane>
-
-        <HBox alignment="CENTER" spacing="10.0">
-          <children>
-            <Button id="btnCreateAccount" fx:id="createAccount" mnemonicParsing="false" onMouseClicked="#onCreateAccountClick" text="Create Account" />
-            <Button id="btnBackToLogin" fx:id="backToLogin" mnemonicParsing="false" onMouseClicked="#onBackToLoginClick" text="Back to Login" />
-          </children>
-        </HBox>
-
-        <Label id="lblErrorText" fx:id="errorText" maxWidth="420.0" textAlignment="CENTER" textFill="RED" wrapText="true" />
+        </VBox>
       </children>
-    </VBox>
+    </StackPane>
   </center>
 </BorderPane>

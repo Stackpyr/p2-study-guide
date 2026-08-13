@@ -14,29 +14,27 @@
             fx:controller="UI.QuestionBankController"
             prefHeight="400.0" prefWidth="600.0">
     <top>
-        <HBox fx:id="titleBar" alignment="CENTER_LEFT" prefHeight="32.0" style="-fx-background-color: #0b49b4;">
+        <HBox fx:id="titleBar" alignment="CENTER_LEFT" prefHeight="36.0" styleClass="title-bar">
             <padding>
-                <Insets left="10.0" right="10.0" />
+                <Insets left="14.0" right="6.0" />
             </padding>
         </HBox>
     </top>
 
-    <padding>
-        <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
-    </padding>
-    <HBox alignment="TOP_CENTER" prefHeight="45.0" prefWidth="404.0">
-        <children>
-            <Text id="lblTitle" fill="#0b49b4" strokeType="OUTSIDE" strokeWidth="0.0" text="Question Bank">
-                <font>
-                    <Font size="24.0" />
-                </font>
-            </Text>
-        </children>
-    </HBox>
+    <center>
+        <VBox alignment="TOP_CENTER" spacing="18.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+            </padding>
+            <children>
+                <Text id="lblTitle" fill="#0b49b4" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="page-title" text="Question Bank">
+                    <font>
+                        <Font size="24.0" />
+                    </font>
+                </Text>
 
-    <HBox alignment="TOP_CENTER" prefHeight="45.0" prefWidth="404.0">
-    <TableView>
-
-    </TableView>
-    </HBox>
+                <TableView VBox.vgrow="ALWAYS" />
+            </children>
+        </VBox>
+    </center>
 </BorderPane>
