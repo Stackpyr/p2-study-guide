@@ -48,7 +48,7 @@ Issue if the team later decides to attempt it for extra credit._
 
 ## AI Usage Log
 - **AI-drafted tests:** [TESTING.md](TESTING.md) — per Jason Hamilton (Slice 1: Accounts). Covers `Account`, `AccountRepository`, `AuthService`, and `DatabaseManager` unit tests; AI-authored methods are tagged `LLM GENERATED` in each test file.
-- **AI code reviews:** None yet — no PR has gone through an AI-assisted review this cycle.
+- **AI code reviews:** [Analiza - AI REVIEW/ADJUDICATION] (https://github.com/Stackpyr/p2-study-guide/pull/27#issuecomment-5276019597) 
 
 ## Extra Credit Log
 | Item | Who | Evidence (Issue/PR) |
