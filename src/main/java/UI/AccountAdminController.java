@@ -12,6 +12,7 @@ package UI;
 
 import Data.Account;
 import Data.AccountRepository;
+import Data.QuizAttempt;
 import Data.QuizAttemptRepository;
 import Service.AuthService;
 import java.security.SecureRandom;
@@ -44,8 +45,7 @@ import javafx.scene.layout.VBox;
 
 public class AccountAdminController extends BaseController {
 
-  // printable ASCII only ('!' through '~') - anything below 33 is a control character
-  // (tab, escape, etc.) that has no business being in a password someone has to read and type
+  // Allowable characters for the newly generated password (all characters - upper and lower case)
   private static final int ASCII_PRINTABLE_START = 33;
   private static final int ASCII_PRINTABLE_END = 126;
   private static final int GENERATED_PASSWORD_LENGTH = 12;
@@ -82,10 +82,6 @@ public class AccountAdminController extends BaseController {
   protected void initialize() {
     super.initialize();
 
-    // Explicit lambdas instead of PropertyValueFactory: PropertyValueFactory resolves getters
-    // reflectively from inside javafx.base, which requires opening the Data package to
-    // javafx.base in module-info.java. These call the getters directly from our own module, so
-    // no reflection - and no module-info change - is needed.
     usernameColumn.setCellValueFactory(cellData ->
         new SimpleStringProperty(cellData.getValue().getUsername()));
     emailColumn.setCellValueFactory(cellData ->
@@ -113,9 +109,7 @@ public class AccountAdminController extends BaseController {
   }
 
   /**
-   * Reloads the account list from the database. Relies on
-   * {@code AccountRepository.getAllAccounts()}, which does not exist yet - see the note in the
-   * PR/chat about adding it. Until then this will throw at runtime.
+   * Reloads the account list from the database.
    */
   private void refreshAccounts() {
     List<Account> accounts = accountRepository.getAllAccounts();
@@ -123,36 +117,35 @@ public class AccountAdminController extends BaseController {
   }
 
   /**
-   * Case-insensitive match against username, email, or display name.
+   * Case insensitive match against username, email, or display name.
    *
    * @param account the account to test
-   * @param query the search text currently in {@code searchField}; a blank or null query
-   *     matches everything
-   * @return true if the account should be shown for the given query
+   * @param query the search text
+   * @return true if the account should be shown for the given search
    */
   private boolean matchesSearch(Account account, String query) {
     if (query == null || query.isBlank()) {
       return true;
     }
-    String needle = query.trim().toLowerCase();
-    return containsIgnoreCase(account.getUsername(), needle)
-        || containsIgnoreCase(account.getEmailAddress(), needle)
-        || containsIgnoreCase(account.getDisplayName(), needle);
+    String lowerQuery = query.trim().toLowerCase();
+    return containsIgnoreCase(account.getUsername(), lowerQuery)
+        || containsIgnoreCase(account.getEmailAddress(), lowerQuery)
+        || containsIgnoreCase(account.getDisplayName(), lowerQuery);
   }
 
   /**
-   * Null-safe, case-insensitive substring check.
+   * Searches the text for a given searchText string, ignoring case.
    *
-   * @param haystack the string to search within; a null value never matches
-   * @param needle the already-lowercased text to search for
-   * @return true if haystack contains needle, ignoring case
+   * @param text the string to search
+   * @param searchText the text to search for
+   * @return true if there's a match
    */
-  private boolean containsIgnoreCase(String haystack, String needle) {
-    return haystack != null && haystack.toLowerCase().contains(needle);
+  private boolean containsIgnoreCase(String text, String searchText) {
+    return text != null && text.toLowerCase().contains(searchText);
   }
 
   /**
-   * Builds a plain-text badge cell for the Active/Admin boolean columns.
+   * Builds a badge cell for the Active/Admin boolean columns.
    *
    * @param whenTrue text to show when the column's value is true
    * @param whenFalse text to show when the column's value is false
@@ -180,8 +173,8 @@ public class AccountAdminController extends BaseController {
   }
 
   /**
-   * Checks whether the given row belongs to the admin who's currently logged in, so
-   * self-service actions (suspend, revoke admin, delete) can be blocked.
+   * Checks whether the given row belongs to the admin who's currently logged in (if so, it may
+   * block certain actions since you can't modify your own account)
    *
    * @param account the row's account
    * @return true if account is the currently logged-in admin's own account
@@ -192,9 +185,9 @@ public class AccountAdminController extends BaseController {
   }
 
   /**
-   * Generates a new random password from the printable ASCII range.
+   * Generates a new random password from the ASCII range.
    *
-   * @return a newly generated password of {@link #GENERATED_PASSWORD_LENGTH} characters
+   * @return a newly generated password
    */
   private String generatePassword() {
     int range = ASCII_PRINTABLE_END - ASCII_PRINTABLE_START + 1;
@@ -239,8 +232,8 @@ public class AccountAdminController extends BaseController {
   }
 
   /**
-   * Generates a new password for an account (after confirmation) and shows it to the admin so
-   * it can be relayed to the user, since there's no email-sending utility in this project yet.
+   * Generates a new password for an account and shows it to the admin so
+   * it can be relayed to the user. Note, there is no email functionality in this application yet.
    *
    * @param account the account whose password is being reset
    */
@@ -253,28 +246,20 @@ public class AccountAdminController extends BaseController {
     }
 
     String newPassword = generatePassword();
-    // Reuse Account's own hashing logic so the hash/salt stay consistent with how every other
-    // password in the system gets stored.
-    Account holder = new Account(account.getEmailAddress(), account.getUsername());
-    holder.setPassword(newPassword);
-    accountRepository.updatePassword(account.getAccountId(), holder.getPasswordHash(),
-        holder.getPasswordSalt());
+    // Reuse Account's own hashing logic to make it easy and consistent
+    Account acct = new Account(account.getEmailAddress(), account.getUsername());
+    acct.setPassword(newPassword);
+    accountRepository.updatePassword(account.getAccountId(), acct.getPasswordHash(),
+        acct.getPasswordSalt());
 
-    // TODO: there's no email-sending utility in this project yet, so the new password can't
-    // actually be emailed to the user. Showing it here instead so the admin can relay it
-    // manually until an EmailService (or similar) exists.
-    // Note: this password is permanent, not temporary - there's no forced-change-on-next-login
-    // flow, so whatever gets generated here is the user's password until it's reset again.
+    // show password to admin (can't email yet)
     showGeneratedPasswordDialog(account.getUsername(), newPassword);
 
     setStatus("Password reset for " + account.getUsername() + ".", false);
   }
 
   /**
-   * Shows the newly generated password in a read-only, monospaced, selectable field (with a
-   * one-click copy button) instead of plain alert text - alert content text can't be selected
-   * or copied, and the generated password can include easily-confused characters, so a
-   * copy/paste path matters more than usual here.
+   * Shows the newly generated password in a read-only field so it can be copied/pasted
    *
    * @param username the account the password belongs to
    * @param newPassword the newly generated password to display
@@ -297,15 +282,14 @@ public class AccountAdminController extends BaseController {
 
     VBox content = new VBox(10.0,
         new Label("New password for " + username + ":"),
-        passwordRow,
-        new Label("Email delivery isn't wired up yet - please share this with the user directly."));
+        passwordRow);
 
     Alert passwordAlert = new Alert(AlertType.INFORMATION);
     passwordAlert.setHeaderText("Password Reset");
     passwordAlert.getDialogPane().setContent(content);
     passwordAlert.getButtonTypes().setAll(ButtonType.OK);
 
-    // pre-select the field's text so a sighted admin can just hit Ctrl+C immediately
+    // pre-select the field's text (makes it easier to just do ctrl+c)
     passwordAlert.setOnShown(e -> {
       passwordField.requestFocus();
       passwordField.selectAll();
@@ -315,8 +299,8 @@ public class AccountAdminController extends BaseController {
   }
 
   /**
-   * Deletes an account after confirmation, unless it has quiz history - in which case deletion
-   * is blocked and an error is shown instead.
+   * Deletes an account after confirmation, unless it has quiz history. In that case, deletion
+   * is blocked and an error is shown.
    *
    * @param account the account whose delete button was clicked
    */
@@ -326,7 +310,7 @@ public class AccountAdminController extends BaseController {
       return;
     }
 
-    List<?> attempts = quizAttemptRepository.getByAccountId(account.getAccountId());
+    List<QuizAttempt> attempts = quizAttemptRepository.getByAccountId(account.getAccountId());
     if (attempts != null && !attempts.isEmpty()) {
       setStatus(account.getUsername() + " has quiz history and can't be deleted.", true);
       return;
@@ -367,8 +351,7 @@ public class AccountAdminController extends BaseController {
   }
 
   /**
-   * Renders the Suspend/Reactivate, Reset Password, Grant/Revoke Admin, and Delete actions for
-   * each row as small icon buttons with hover tooltips, so the column stays narrow.
+   * Renders the Suspend/Reactivate, Reset Password, Grant/Revoke Admin, and Delete butons
    */
   private class ActionsCell extends TableCell<Account, Void> {
     private static final String ICON_STYLE =
@@ -382,8 +365,7 @@ public class AccountAdminController extends BaseController {
         deleteButton);
 
     /**
-     * Wires each button in the row to its corresponding handler, resolving the row's account
-     * lazily at click time via {@link #getRowAccount()}.
+     * Wires up each button to their respective handlers
      */
     ActionsCell() {
       statusButton.setOnAction(e -> handleSuspendReactivate(getRowAccount()));
@@ -396,7 +378,7 @@ public class AccountAdminController extends BaseController {
     }
 
     /**
-     * Builds a compact, icon-only button styled to fit in a narrow table column.
+     * Builds the icon buttons for the action column
      *
      * @param icon the glyph to display on the button
      * @return a small icon button
@@ -408,7 +390,7 @@ public class AccountAdminController extends BaseController {
     }
 
     /**
-     * Looks up the account backing this cell's current row.
+     * Looks up the account for the given row
      *
      * @return the account for this row
      */
@@ -417,11 +399,10 @@ public class AccountAdminController extends BaseController {
     }
 
     /**
-     * Refreshes the row's buttons (icon and tooltip) to match the current account, or clears
-     * the cell entirely for empty/out-of-range rows.
+     * Refreshes the row's buttons to match the current account state
      *
-     * @param item unused - this column has no cell value, only row-level actions
-     * @param empty true if this cell no longer corresponds to a row
+     * @param item the item for this cell
+     * @param empty true if this cell no longer links to a row
      */
     @Override
     protected void updateItem(Void item, boolean empty) {
@@ -433,7 +414,7 @@ public class AccountAdminController extends BaseController {
       Account account = getRowAccount();
 
       boolean active = account.getIsActive();
-      statusButton.setText(active ? "⏸" : "▶"); // pause : play
+      statusButton.setText(active ? "⏸" : "▶"); // inactive:active
       statusButton.setTooltip(new Tooltip(active ? "Suspend" : "Reactivate"));
 
       boolean admin = account.getIsAdmin();
