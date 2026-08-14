@@ -17,6 +17,7 @@ import Data.QuizAttemptRepository;
 import Service.AuthService;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -59,6 +60,10 @@ public class AccountAdminController extends BaseController {
   private static final int ASCII_PRINTABLE_END = 126;
   private static final int GENERATED_PASSWORD_LENGTH = 12;
 
+  // Nicer casing for known OAuth provider keys (see Service.OAuthProvider#getProviderName()) -
+  // anything not listed here falls back to a capitalized version of the key.
+  private static final Map<String, String> PROVIDER_DISPLAY_NAMES = Map.of("linkedin", "LinkedIn");
+
   private final AccountRepository accountRepository = new AccountRepository();
   private final QuizAttemptRepository quizAttemptRepository = new QuizAttemptRepository();
   private final ObservableList<Account> allAccounts = FXCollections.observableArrayList();
@@ -74,6 +79,8 @@ public class AccountAdminController extends BaseController {
   private TableColumn<Account, String> emailColumn;
   @FXML
   private TableColumn<Account, String> displayNameColumn;
+  @FXML
+  private TableColumn<Account, String> accountTypeColumn;
   @FXML
   private TableColumn<Account, Boolean> activeColumn;
   @FXML
@@ -97,6 +104,8 @@ public class AccountAdminController extends BaseController {
         new SimpleStringProperty(cellData.getValue().getEmailAddress()));
     displayNameColumn.setCellValueFactory(cellData ->
         new SimpleStringProperty(cellData.getValue().getDisplayName()));
+    accountTypeColumn.setCellValueFactory(cellData ->
+        new SimpleStringProperty(accountTypeLabel(cellData.getValue())));
     activeColumn.setCellValueFactory(cellData ->
         new SimpleBooleanProperty(cellData.getValue().getIsActive()));
     adminColumn.setCellValueFactory(cellData ->
@@ -194,6 +203,33 @@ public class AccountAdminController extends BaseController {
   }
 
   /**
+   * Human-readable label for an account's sign-in method: "Local" for a normal
+   * username/password account, or the linked provider's display name (e.g. "LinkedIn") for a
+   * social sign-in account.
+   *
+   * @param account the account to label
+   * @return the account's sign-in method, for display in the table
+   */
+  private String accountTypeLabel(Account account) {
+    String provider = account.getOauthProvider();
+    if (provider == null || provider.isBlank()) {
+      return "Local";
+    }
+    return PROVIDER_DISPLAY_NAMES.getOrDefault(provider, capitalize(provider));
+  }
+
+  /**
+   * Capitalizes the first letter of a string, used as a fallback display name for any OAuth
+   * provider key that isn't in {@link #PROVIDER_DISPLAY_NAMES}.
+   *
+   * @param value the string to capitalize
+   * @return value with its first letter capitalized, unchanged if empty
+   */
+  private String capitalize(String value) {
+    return value.isEmpty() ? value : Character.toUpperCase(value.charAt(0)) + value.substring(1);
+  }
+
+  /**
    * Generates a new random password from the ASCII range.
    *
    * @return a newly generated password
@@ -248,6 +284,15 @@ public class AccountAdminController extends BaseController {
    * @param account the account whose password is being reset
    */
   private void resetPassword(Account account) {
+    if (account.getOauthProvider() != null) {
+      // Defensive - the button is disabled for these rows, but guard here too in case this is
+      // ever called another way. Social sign-in accounts have no local password to reset; see
+      // the relaxed CHECK constraint on the account table's password/oauth columns.
+      setStatus(account.getUsername() + " signs in with " + accountTypeLabel(account)
+          + " - there's no local password to reset.", true);
+      return;
+    }
+
     Optional<String> chosen = promptForPassword(account.getUsername());
     if (chosen.isEmpty()) {
       return; // cancelled
@@ -423,7 +468,6 @@ public class AccountAdminController extends BaseController {
       adminButton.setOnAction(e -> grantRevokeAdmin(getRowAccount()));
       deleteButton.setOnAction(e -> delete(getRowAccount()));
 
-      resetPasswordButton.setTooltip(new Tooltip("Reset Password"));
       deleteButton.setTooltip(new Tooltip("Delete"));
     }
 
@@ -466,6 +510,12 @@ public class AccountAdminController extends BaseController {
       boolean active = account.getIsActive();
       statusButton.setText(active ? "⏸" : "▶"); // inactive:active
       statusButton.setTooltip(new Tooltip(active ? "Suspend" : "Reactivate"));
+
+      boolean isOAuth = account.getOauthProvider() != null;
+      resetPasswordButton.setDisable(isOAuth);
+      resetPasswordButton.setTooltip(new Tooltip(isOAuth
+          ? "Signs in with " + accountTypeLabel(account) + " - no password to reset"
+          : "Reset Password"));
 
       boolean admin = account.getIsAdmin();
       adminButton.setStyle(ICON_STYLE + (admin ? " -fx-background-color: #ffe28a;" : ""));
