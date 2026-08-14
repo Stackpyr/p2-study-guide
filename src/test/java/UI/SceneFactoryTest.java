@@ -23,6 +23,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxToolkit;
+import org.testfx.util.WaitForAsyncUtils;
 
 class SceneFactoryTest {
 
@@ -61,6 +62,14 @@ class SceneFactoryTest {
     logInAs(false);
 
     Scene scene = FxToolkit.setupScene(() -> SceneFactory.load(SceneType.DASHBOARD));
+    // The dashboard's content lives inside a ScrollPane, and a ScrollPane doesn't wire its
+    // content into its own children list (what lookup() walks) until its Skin is created on a
+    // CSS/layout pass. waitForFxEvents() only drains the Platform.runLater queue - it doesn't
+    // guarantee a rendering pulse has actually fired - so force CSS + layout synchronously here
+    // instead of hoping one did.
+    WaitForAsyncUtils.waitForFxEvents();
+    scene.getRoot().applyCss();
+    scene.getRoot().layout();
     Button manageAccounts = (Button) scene.lookup("#manageAccountsButton");
 
     assertNotNull(manageAccounts);
@@ -76,6 +85,12 @@ class SceneFactoryTest {
     logInAs(true);
 
     Scene scene = FxToolkit.setupScene(() -> SceneFactory.load(SceneType.DASHBOARD));
+    // to deal with test failures due to scrolling on the UI
+    // a PITA!!
+    WaitForAsyncUtils.waitForFxEvents();
+    scene.getRoot().applyCss();
+    scene.getRoot().layout();
+
     Button manageAccounts = (Button) scene.lookup("#manageAccountsButton");
 
     assertNotNull(manageAccounts);

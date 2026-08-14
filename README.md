@@ -8,8 +8,8 @@ CST 338 Project 2 — Team **Team 1**.
 | Slice | Owner | GitHub username | Issues | Branch(es) | PR(s) | Enhancement chosen              | Status   |
 |-------|-------|-----------------|--------|------------|-------|---------------------------------|----------|
 | 1 — Accounts | Jason Hamilton | Stackpyr | #3, #4, #5, #29, #31 | jason/register-account, jason/ai-review-fixes, jason/admin-accnt-mgmt, jason/social-oauth | #13, #21, #26, #30 | ScribeJava for Social OAUTH | Complete |
-| 2 — Question Bank | Analiza Boehning | aboehning-cs |#6, #7, #8 |analiza/question-bank, analiza/question-bank-scene, analiza/question-database, analiza/question-bank-category |#15, #20, #27 | Advanced Query (Search & Filter) | In-Progress |
-| 3 — Quiz Engine | Sawyer Phillips | sawyerphillips | #9, #10, #11 | sawyer/quiz-attempt-data, sawyer/quiz-scene, sawyer/quiz-scoring, sawyer/result-scene-alerts, sawyer/quiz-crud-ui, sawyer/quiz-testfx | #17, #18, #22, #23, #28, #32 | Alerts and Notifications | In-Progress |
+| 2 — Question Bank | Analiza Boehning | aboehning-cs |#6, #7, #8 |analiza/question-bank, analiza/question-bank-scene, analiza/question-database, analiza/question-bank-category |#15, #20, #27 | Advanced Query (Search & Filter) | Complete |
+| 3 — Quiz Engine | Sawyer Phillips | sawyerphillips | #9, #10, #11 | sawyer/quiz-attempt-data, sawyer/quiz-scene, sawyer/quiz-scoring, sawyer/result-scene-alerts, sawyer/quiz-crud-ui, sawyer/quiz-testfx | #17, #18, #22, #23, #28, #32 | Alerts and Notifications | Complete |
 
 _Status values: planned · in-progress · complete_
 
@@ -48,8 +48,8 @@ Issue if the team later decides to attempt it for extra credit._
 - **AI code reviews (Slice 3: Quiz Engine):** [PR #23](https://github.com/Stackpyr/p2-study-guide/pull/23) — [AI review](https://github.com/Stackpyr/p2-study-guide/pull/23#issuecomment-5256267752) (OpenAI Codex, flagged a possible duplicate quiz-attempt save in `QuizController.onSubmitClick()`), [adjudication](https://github.com/Stackpyr/p2-study-guide/pull/23#issuecomment-5256602846), and [fixing commit](https://github.com/Stackpyr/p2-study-guide/commit/7b6661c1f97e90ed6ee1fef3dd1eed5d94cd980a).
 
 ## Extra Credit Log
-| Item                                                                                                                                                                                                                                                                                                           | Who | Evidence (Issue/PR) |
-|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----|---------------------|
+| Item                                                                                                                                                                                                                                                                                                           | Who            | Evidence (Issue/PR) |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------|---------------------|
 | (Accounts slice): TableView populated with live data for the Account Administration screen. It loads all accounts and renders them in a TableView backed by a FilteredList/SortedList that live-updates as the admin searches and after every account change | Jason Hamilton | [Issue #31](https://github.com/Stackpyr/p2-study-guide/issues/31) [PR #30](https://github.com/Stackpyr/p2-study-guide/pull/30)
 
 ## Build & Run
