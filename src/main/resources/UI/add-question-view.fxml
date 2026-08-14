@@ -24,17 +24,42 @@
     </fx:define>
 
     <top>
-        <HBox fx:id="titleBar" alignment="CENTER_LEFT" prefHeight="36.0" styleClass="title-bar">
+        <HBox
+                fx:id="titleBar"
+                alignment="CENTER_LEFT"
+                prefHeight="36.0"
+                styleClass="title-bar">
+
             <padding>
-                <Insets left="14.0" right="6.0" />
+                <Insets left="14.0" right="6.0"/>
             </padding>
+
+            <Label
+                    styleClass="title-bar-label"
+                    text="Otter Do Better"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label
+                    fx:id="sessionLabel"
+                    styleClass="title-bar-session-label"
+                    text="Not logged in"/>
+
+            <Button
+                    onAction="#onMinimizeClick"
+                    styleClass="title-bar-button"
+                    text="_"/>
+
+            <Button
+                    onAction="#onCloseClick"
+                    styleClass="title-bar-button"
+                    text="X"/>
         </HBox>
     </top>
-
     <center>
         <StackPane>
             <children>
-                <VBox alignment="CENTER" maxWidth="580.0" spacing="18.0" styleClass="card">
+                <VBox alignment="TOP_CENTER" maxWidth="700.0" spacing="12.0" styleClass="card add-question-card">
                     <children>
                         <Text fill="#0b49b4" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="page-title" text="Add a Question">
                             <font>
@@ -45,7 +70,10 @@
                         <VBox alignment="TOP_LEFT" spacing="6.0">
                             <children>
                                 <Label styleClass="field-label" text="Question" />
-                                <TextArea fx:id="questionTextArea" prefHeight="120.0" promptText="Enter your question here" wrapText="true" />
+                                <TextArea fx:id="questionTextArea"
+                                          prefHeight="80.0"
+                                          promptText="Enter your question here"
+                                          wrapText="true" />
                             </children>
                         </VBox>
 
