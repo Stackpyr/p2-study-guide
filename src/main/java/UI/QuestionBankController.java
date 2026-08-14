@@ -7,14 +7,21 @@ import Service.AuthService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.control.Label;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  *  Controller for Question Bank that shows a table of all questions with search and filter options based on user selection/input.
@@ -42,7 +49,13 @@ public class QuestionBankController extends BaseController {
     private TableColumn<Question, String> categoryColumn;
 
     @FXML
+    private TableColumn<Question, Void> actionsColumn;
+
+    @FXML
     private Label noMatchesLabel;
+
+    @FXML
+    private Label statusLabel;
 
     private final QuestionRepository questionRepository = new QuestionRepository();
 
@@ -55,11 +68,17 @@ public class QuestionBankController extends BaseController {
     protected void initialize() {
         super.initialize();
 
+        // stretch columns to always exactly fill the table's width, instead of the default
+        // policy which can leave a gap or let columns run past the visible area
+        questionTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
         questionColumn.setCellValueFactory(
                 new PropertyValueFactory<>("questionText"));
 
         categoryColumn.setCellValueFactory(
                 new PropertyValueFactory<>("category"));
+
+        actionsColumn.setCellFactory(col -> new ActionsCell());
 
         categoryChoiceBox.getItems().addAll(
                 "All Categories",
@@ -147,6 +166,40 @@ public class QuestionBankController extends BaseController {
     }
 
     /**
+     * Confirms with the user, then deletes the question from the database and removes it from
+     * the table without needing a full reload.
+     * @param question the question whose delete button was clicked
+     */
+    private void delete(Question question) {
+        Alert confirm = new Alert(AlertType.CONFIRMATION,
+                "Delete this question? This can't be undone.", ButtonType.YES, ButtonType.NO);
+        Optional<ButtonType> result = confirm.showAndWait();
+        if (result.isEmpty() || result.get() != ButtonType.YES) {
+            return;
+        }
+
+        boolean deleted = questionRepository.deleteQuestion(question.getQuestionId());
+        if (!deleted) {
+            setStatus("Couldn't delete that question. Please try again.", true);
+            return;
+        }
+
+        questionTable.getItems().remove(question);
+        noMatchesMessageHandler(questionTable.getItems());
+        setStatus("Question has been deleted.", false);
+    }
+
+    /**
+     * Updates the status message shown below the search/filter row.
+     * @param message the message to display
+     * @param isError true to style the message as an error
+     */
+    private void setStatus(String message, boolean isError) {
+        statusLabel.setText(message);
+        statusLabel.setStyle(isError ? "-fx-text-fill: #b40b0b;" : "-fx-text-fill: #0b7a1f;");
+    }
+
+    /**
      * Logs user out of the application and returns to login screen
      * @param event login screen
      */
@@ -154,5 +207,42 @@ public class QuestionBankController extends BaseController {
     protected void onLogoutClick(MouseEvent event) {
         AuthService.getInstance().logout();
         swapScene(event, SceneType.LOGIN);
+    }
+
+    /**
+     * Returns to the Dashboard scene without logging out
+     * @param event dashboard scene
+     */
+    @FXML
+    protected void onBackClick(ActionEvent event) {
+        swapScene(event, SceneType.DASHBOARD);
+    }
+
+    /**
+     * Draws the Delete button for each row in the Actions column
+     */
+    private class ActionsCell extends TableCell<Question, Void> {
+        private final Button deleteButton = new Button("🗑"); // wastebasket
+
+        ActionsCell() {
+            deleteButton.setStyle(
+                    "-fx-font-size: 13px; -fx-padding: 2 6 2 6; -fx-min-width: 28px; -fx-cursor: hand;");
+            deleteButton.setTooltip(new Tooltip("Delete"));
+            deleteButton.setOnAction(e -> delete(getRowQuestion()));
+        }
+
+        /**
+         * Looks up the question for the given row
+         * @return the question for this row
+         */
+        private Question getRowQuestion() {
+            return getTableView().getItems().get(getIndex());
+        }
+
+        @Override
+        protected void updateItem(Void item, boolean empty) {
+            super.updateItem(item, empty);
+            setGraphic(empty ? null : deleteButton);
+        }
     }
 }

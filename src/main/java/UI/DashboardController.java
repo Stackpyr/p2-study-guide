@@ -23,8 +23,6 @@ public class DashboardController extends BaseController {
   @FXML
   public Button logout;
   @FXML
-  private Button takeQuizButton;
-  @FXML
   private Button manageAccountsButton;
   @FXML
   private Label statusText;
@@ -39,13 +37,6 @@ public class DashboardController extends BaseController {
     boolean isAdmin = AuthService.getInstance().isAdmin();
     manageAccountsButton.setVisible(isAdmin);
     manageAccountsButton.setManaged(isAdmin);
-  }
-
-  @FXML
-  protected void onTakeQuizClick(MouseEvent event) {
-    // TODO: once Question Bank / Quiz Engine has a scene, swap to it instead
-    // swapScene(event, SceneType.QUIZ);
-    statusText.setText("Quiz taking isn't built yet - check back soon!");
   }
 
   @FXML

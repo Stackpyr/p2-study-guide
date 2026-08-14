@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -24,39 +25,23 @@
     </fx:define>
 
     <top>
-        <HBox
-                fx:id="titleBar"
-                alignment="CENTER_LEFT"
-                prefHeight="36.0"
-                styleClass="title-bar">
-
+        <HBox fx:id="titleBar" alignment="CENTER_LEFT" onMouseDragged="#onTitleBarDragged"
+              onMousePressed="#onTitleBarPressed" prefHeight="36.0" styleClass="title-bar">
             <padding>
                 <Insets left="14.0" right="6.0"/>
             </padding>
-
-            <Label
-                    styleClass="title-bar-label"
-                    text="Otter Do Better"/>
-
-            <Region HBox.hgrow="ALWAYS"/>
-
-            <Label
-                    fx:id="sessionLabel"
-                    styleClass="title-bar-session-label"
-                    text="Not logged in"/>
-
-            <Button
-                    onAction="#onMinimizeClick"
-                    styleClass="title-bar-button"
-                    text="_"/>
-
-            <Button
-                    onAction="#onCloseClick"
-                    styleClass="title-bar-button"
-                    text="X"/>
+            <children>
+                <Label styleClass="title-bar-label" text="Otter Do Better" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Label fx:id="sessionLabel" styleClass="title-bar-session-label" text="Not logged in" />
+                <Button onAction="#onMinimizeClick" styleClass="title-bar-button" text="_" />
+                <Button onAction="#onCloseClick" styleClass="title-bar-button" text="X" />
+            </children>
         </HBox>
     </top>
     <center>
+        <ScrollPane fitToWidth="true" styleClass="transparent-scroll-pane">
+        <content>
         <StackPane>
             <children>
                 <VBox alignment="TOP_CENTER" maxWidth="700.0" spacing="12.0" styleClass="card add-question-card">
@@ -137,6 +122,8 @@
                 </VBox>
             </children>
         </StackPane>
+        </content>
+        </ScrollPane>
     </center>
 
 </BorderPane>
