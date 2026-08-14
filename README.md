@@ -7,8 +7,8 @@ CST 338 Project 2 — Team **Team 1**.
 ## Team & Slice Ownership
 | Slice | Owner | GitHub username | Issues | Branch(es) | PR(s) | Enhancement chosen              | Status   |
 |-------|-------|-----------------|--------|------------|-------|---------------------------------|----------|
-| 1 — Accounts | Jason Hamilton | Stackpyr | #3, #4, #5, #29, #31 | jason/register-account, jason/ai-review-fixes, jason/admin-accnt-mgmt, jason/social-oauth | #13, #21, #26, #30 | ScribeJava for Social OAUTH | Complete |
-| 2 — Question Bank | Analiza Boehning | aboehning-cs |#6, #7, #8 |analiza/question-bank, analiza/question-bank-scene, analiza/question-database, analiza/question-bank-category |#15, #20, #27 | Advanced Query (Search & Filter) | Complete |
+| 1 — Accounts | Jason Hamilton | Stackpyr | #3, #4, #5, #29, #31, #34 | jason/register-account, jason/ai-review-fixes, jason/admin-accnt-mgmt, jason/social-oauth, jason/ui-fixes | #13, #21, #26, #30, #33, #36 | ScribeJava for Social OAUTH | Complete |
+| 2 — Question Bank | Analiza Boehning | aboehning-cs |#6, #7, #8 |analiza/question-bank, analiza/question-bank-scene, analiza/question-database, analiza/question-bank-category, analiza/add-question-ui-fixes |#15, #20, #27, #35 | Advanced Query (Search & Filter) | Complete |
 | 3 — Quiz Engine | Sawyer Phillips | sawyerphillips | #9, #10, #11 | sawyer/quiz-attempt-data, sawyer/quiz-scene, sawyer/quiz-scoring, sawyer/result-scene-alerts, sawyer/quiz-crud-ui, sawyer/quiz-testfx | #17, #18, #22, #23, #28, #32 | Alerts and Notifications | Complete |
 
 _Status values: planned · in-progress · complete_
@@ -38,7 +38,10 @@ Issue if the team later decides to attempt it for extra credit._
 | [#27](https://github.com/Stackpyr/p2-study-guide/pull/27) | Analiza Boehning | Jason Hamilton (changes requested), Sawyer Phillips (comment) | [AI review](https://github.com/Stackpyr/p2-study-guide/pull/27#issuecomment-5276019597) | Merged |
 | [#28](https://github.com/Stackpyr/p2-study-guide/pull/28) | Sawyer Phillips | Jason Hamilton, Analiza Boehning | —                                                                                       | Merged                                                                                                      |
 | [#30](https://github.com/Stackpyr/p2-study-guide/pull/30) | Jason Hamilton | Analiza Boehning, Sawyer Phillips | —                                                                                       | Merged                                                                                                      |
-| [#32](https://github.com/Stackpyr/p2-study-guide/pull/32) | Sawyer Phillips | Jason Hamilton, Analiza Boehning | —                                                                                       | Merged   
+| [#32](https://github.com/Stackpyr/p2-study-guide/pull/32) | Sawyer Phillips | Jason Hamilton, Analiza Boehning | —                                                                                       | Merged                                                                                                      |
+| [#33](https://github.com/Stackpyr/p2-study-guide/pull/33) | Jason Hamilton | Analiza Boehning, Sawyer Phillips | —                                                                                       | Merged                                                                                                      |
+| [#35](https://github.com/Stackpyr/p2-study-guide/pull/35) | Analiza Boehning | Jason Hamilton, Sawyer Phillips | —                                                                                       | Merged                                                                                                      |
+| [#36](https://github.com/Stackpyr/p2-study-guide/pull/36) | Jason Hamilton | Analiza Boehning, Sawyer Phillips | —                                                                                       | Merged                                                                                                      |
 
 ## AI Usage Log
 - **AI-drafted tests:** [TESTING.md](TESTING.md) — Jason Hamilton (Slice 1: Accounts). Covers `Account`, `AccountRepository`, `AuthService`, and `DatabaseManager` unit tests; AI-authored methods are tagged `LLM GENERATED` in each test file.
