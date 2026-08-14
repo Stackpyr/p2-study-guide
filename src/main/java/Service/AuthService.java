@@ -79,6 +79,58 @@ public class AuthService {
     }
   }
 
+  /**
+   * Logs in a user using OAuth2 authentication
+   *
+   * @param profile the verified identity a provider returned
+   * @return AuthResult indicating success or failure
+   */
+  public AuthResult loginWithOAuth(OAuthProvider.Profile profile) {
+    if (isLoggedIn()) {
+      logout(); // reset the current account
+    }
+
+    if (profile == null || profile.email() == null || profile.email().isBlank()) {
+      return AuthResult.USERNAME_BLANK;
+    }
+
+    Account account = accountRepository.getByOAuthIdentity(profile.provider(), profile.subject());
+
+    if (account == null) {
+      // not linked yet - try to find an account with the same username and link it
+      account = accountRepository.getByUsername(profile.email());
+      if (account != null) {
+        // found an account with the same username - link the identity
+        accountRepository.linkOAuthIdentity(account.getAccountId(), profile.provider(),
+            profile.subject());
+        account.setOauthIdentity(profile.provider(), profile.subject());
+      }
+    }
+
+    if (account == null) {
+      // not linked yet - create a new account
+      account = new Account(profile.email()); // username defaults to email
+
+      if (profile.displayName() != null && !profile.displayName().isBlank()) {
+        account.setDisplayName(profile.displayName());
+      }
+
+      account.setOauthIdentity(profile.provider(), profile.subject());
+      account = accountRepository.addAccount(account);
+
+      if (account == null) {
+        return AuthResult.INCORRECT_USER_PASSWORD; // insert failed for some other reason
+      }
+    }
+
+    if (!account.getIsActive()) {
+      return AuthResult.ACCOUNT_NOT_ACTIVE;
+    }
+
+    currentAccount = account;
+    return AuthResult.SUCCESS;
+  }
+
   public void logout() {
     currentAccount = null;
   }

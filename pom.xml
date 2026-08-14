@@ -323,9 +323,6 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <version>${junit.version}</version>
-      <!-- provided (not test) scope so module-info.java's "requires static"
-           can resolve it during the main compile too, without bundling it
-           into the packaged app or conflicting with the test classpath -->
       <scope>provided</scope>
     </dependency>
 
@@ -340,6 +337,12 @@
       <groupId>org.xerial</groupId>
       <artifactId>sqlite-jdbc</artifactId>
       <version>3.50.3.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.scribejava</groupId>
+      <artifactId>scribejava-apis</artifactId>
+      <version>8.3.3</version>
     </dependency>
 
     <dependency>

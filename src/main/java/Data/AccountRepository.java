@@ -22,10 +22,12 @@ public class AccountRepository {
   private final String GET_ALL_ACCOUNTS_CMD = "SELECT * FROM account ORDER BY account_id";
   private final String GET_BY_ID_CMD = "SELECT * FROM account WHERE account_id = ?";
   private final String GET_BY_USERNAME_CMD = "SELECT * FROM account WHERE username = ?";
-  private final String INSERT_CMD = "INSERT INTO account (username, email, password_hash, password_salt, display_name, is_active, is_admin) VALUES (?, ?, ?, ?, ?, ?, ?)";
+  private final String GET_BY_OAUTH_IDENTITY_CMD = "SELECT * FROM account WHERE oauth_provider = ? AND oauth_subject = ?";
+  private final String INSERT_CMD = "INSERT INTO account (username, email, password_hash, password_salt, display_name, is_active, is_admin, oauth_provider, oauth_subject) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
   private final String UPDATE_PWD_CMD = "UPDATE account SET password_hash = ?, password_salt = ?, updated_at = CURRENT_TIMESTAMP WHERE account_id = ?";
   private final String UPDATE_ACTIVE_CMD = "UPDATE account SET is_active = ?, updated_at = CURRENT_TIMESTAMP WHERE account_id = ?";
   private final String UPDATE_ADMIN_CMD = "UPDATE account SET is_admin = ?, updated_at = CURRENT_TIMESTAMP WHERE account_id = ?";
+  private final String UPDATE_OAUTH_IDENTITY_CMD = "UPDATE account SET oauth_provider = ?, oauth_subject = ?, updated_at = CURRENT_TIMESTAMP WHERE account_id = ?";
   private final String DELETE_ACCOUNT_CMD = "DELETE FROM account WHERE account_id = ?";
 
   /**
@@ -50,6 +52,8 @@ public class AccountRepository {
       addStmt.setString(5, account.getDisplayName());
       addStmt.setBoolean(6, account.getIsActive());
       addStmt.setBoolean(7, account.getIsAdmin());
+      addStmt.setString(8, account.getOauthProvider());
+      addStmt.setString(9, account.getOauthSubject());
       addStmt.executeUpdate();
 
       try (ResultSet rs = addStmt.getGeneratedKeys()) {
@@ -123,6 +127,46 @@ public class AccountRepository {
       System.out.println("Error: " + e.getMessage());
     }
     return null;
+  }
+
+  /**
+   * Retrieves an account by its social identity.
+   * @param provider the provider key
+   * @param subject the provider's user id
+   * @return AccountDao object with the account's information
+   */
+  public Account getByOAuthIdentity(String provider, String subject) {
+    try (PreparedStatement selectStmt = conn.prepareStatement(GET_BY_OAUTH_IDENTITY_CMD)) {
+      selectStmt.setString(1, provider);
+      selectStmt.setString(2, subject);
+
+      try (ResultSet rs = selectStmt.executeQuery()) {
+        if (rs.next()) {
+          return mapRow(rs);
+        }
+        return null;
+      }
+    } catch (SQLException e) {
+      System.out.println("Error: " + e.getMessage());
+    }
+    return null;
+  }
+
+  /**
+   * Links an existing account to a social identity
+   * @param accountId ID of the account to link
+   * @param provider the provider key
+   * @param subject the provider's user id
+   */
+  public void linkOAuthIdentity(int accountId, String provider, String subject) {
+    try (PreparedStatement stmt = conn.prepareStatement(UPDATE_OAUTH_IDENTITY_CMD)) {
+      stmt.setString(1, provider);
+      stmt.setString(2, subject);
+      stmt.setInt(3, accountId);
+      stmt.executeUpdate();
+    } catch (SQLException e) {
+      System.out.println("Error: " + e.getMessage());
+    }
   }
 
   /**
@@ -211,7 +255,9 @@ public class AccountRepository {
           rs.getBoolean("is_active"),
           rs.getBoolean("is_admin"),
           rs.getString("password_hash"),
-          rs.getString("password_salt")
+          rs.getString("password_salt"),
+          rs.getString("oauth_provider"),
+          rs.getString("oauth_subject")
       );
     } catch (SQLException ex) {
       System.out.println("Error: " + ex.getMessage());

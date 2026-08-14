@@ -21,6 +21,8 @@ public class Account {
   private String displayName;
   private boolean isActive = true;
   private boolean isAdmin = false;
+  private String oauthProvider;
+  private String oauthSubject;
 
   /**
    * Allows for hydration of a user object from a database row
@@ -32,9 +34,12 @@ public class Account {
    * @param isAdmin admin status of the user
    * @param passwordHash hashed password of the user
    * @param passwordSalt salt used to hash the password
+   * @param oauthProvider the social provider this account is linked to
+   * @param oauthSubject the user id from the provider for this user
    */
   Account(int accountId, String username, String emailAddress, String displayName,
-      boolean isActive, boolean isAdmin, String passwordHash, String passwordSalt) {
+      boolean isActive, boolean isAdmin, String passwordHash, String passwordSalt,
+      String oauthProvider, String oauthSubject) {
     this.accountId = accountId;
     this.username = username;
     this.emailAddress = emailAddress;
@@ -43,6 +48,8 @@ public class Account {
     this.isAdmin = isAdmin;
     this.passwordHash = passwordHash;
     this.passwordSalt = passwordSalt;
+    this.oauthProvider = oauthProvider;
+    this.oauthSubject = oauthSubject;
   }
 
   /**
@@ -222,5 +229,31 @@ public class Account {
   */
   public void setIsAdmin(Boolean admin) {
     isAdmin = admin;
+  }
+
+  /**
+   * Gets the social provider this account is linked to
+   * @return the provider key (e.g. "linkedin"); null for a local account
+   */
+  public String getOauthProvider() {
+    return oauthProvider;
+  }
+
+  /**
+   * Gets the linked provider's user id
+   * @return the provider's subject id; null for a local account
+   */
+  public String getOauthSubject() {
+    return oauthSubject;
+  }
+
+  /**
+   * Links this account to a social auth identity
+   * @param oauthProvider the provider key
+   * @param oauthSubject the provider's user id
+   */
+  public void setOauthIdentity(String oauthProvider, String oauthSubject) {
+    this.oauthProvider = oauthProvider;
+    this.oauthSubject = oauthSubject;
   }
 }
