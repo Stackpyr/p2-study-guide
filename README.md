@@ -62,9 +62,9 @@ Issue if the team later decides to attempt it for extra credit._
 - **AI code reviews (Slice 2: Question Bank):** [PR #27](https://github.com/Stackpyr/p2-study-guide/pull/27) — [AI review](https://github.com/Stackpyr/p2-study-guide/pull/27#issuecomment-5276019597) (GitHub Copilot)
 
 ## Extra Credit Log
-| Item | Who | Evidence (Issue/PR) |
-|------|-----|---------------------|
-| | | |
+| Item                                                                                                                                                                                                                                                                                                           | Who | Evidence (Issue/PR) |
+|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----|---------------------|
+| (Accounts slice): TableView populated with live data for the Account Administration screen. It loads all accounts and renders them in a TableView backed by a FilteredList/SortedList that live-updates as the admin searches and after every account change | Jason Hamilton | [PR #30](https://github.com/Stackpyr/p2-study-guide/pull/30) — `AccountAdminController.java`, `account-admin-view.fxml` |
 
 ## Build & Run
 ```
