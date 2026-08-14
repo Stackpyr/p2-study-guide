@@ -225,3 +225,7 @@ gradle-app.setting
 effective-pom-debug.xml
 mvn-debug-output.txt
 /${project.build.directory}
+
+# Runtime SQLite database (regenerated locally by DatabaseManager, not shared state)
+*.sqlite
+*.sqlite-journal

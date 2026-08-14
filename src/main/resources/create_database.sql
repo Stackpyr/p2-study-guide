@@ -26,6 +26,7 @@ CREATE INDEX IF NOT EXISTS idx_account_email ON account (email);
 CREATE TABLE IF NOT EXISTS question (
                                         question_id    INTEGER PRIMARY KEY AUTOINCREMENT,
                                         question_text  TEXT NOT NULL,
+                                        category       TEXT NOT NULL,
                                         choice_a       TEXT NOT NULL,
                                         choice_b       TEXT NOT NULL,
                                         choice_c       TEXT NOT NULL,

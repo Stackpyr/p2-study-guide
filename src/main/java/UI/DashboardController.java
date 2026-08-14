@@ -49,6 +49,11 @@ public class DashboardController extends BaseController {
   }
 
   @FXML
+  protected void onQuestionBankClick(MouseEvent event) {
+    swapScene(event, SceneType.QUESTION_BANK);
+  }
+
+  @FXML
   protected void onManageAccountsClick(MouseEvent event) {
     // Only allow admins
     if (!AuthService.getInstance().isAdmin()) {

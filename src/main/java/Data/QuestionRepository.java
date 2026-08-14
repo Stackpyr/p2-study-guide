@@ -2,7 +2,7 @@
  * Responsible for CRUD operations on the question table and hydrating the Question object
  *
  * @author Analiza Boehning
- * @version 0.1.1
+ * @version 0.1.1 added Search feature
  * @since 7/31/2026
  */
 
@@ -20,9 +20,12 @@ public class QuestionRepository {
     private final Connection conn;
     private final String GET_BY_QID_CMD = "SELECT * FROM question WHERE question_id = ?";
     private final String GET_ALL_CMD = "SELECT * FROM question ORDER BY question_id";
-    private final String INSERT_CMD = "INSERT INTO question (question_text, choice_a, choice_b, choice_c, choice_d, correct_answer) VALUES (?, ?, ?, ?, ?, ?)";
-    private final String UPDATE_CMD = "UPDATE question SET question_text = ?, choice_a = ?, choice_b= ?, choice_c = ?, choice_d = ?, correct_answer = ? WHERE question_id = ?";
-    private final String DELETE_CMD = "DELETE FROM question WHERE question_id = ?";
+    private final String GET_BY_CATEGORY_CMD = "SELECT * FROM question WHERE category = ?";
+    private final String GET_BY_KEYWORD_CMD = "SELECT * FROM question WHERE question_text LIKE ?";
+    private final String GET_BY_CATEGORY_AND_KEYWORD_CMD = "SELECT * FROM question WHERE category = ? AND question_text LIKE ?";
+    private final String INSERT_CMD = "INSERT INTO question (question_text, category, choice_a, choice_b, choice_c, choice_d, correct_answer) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private final String UPDATE_CMD = "UPDATE question SET question_text = ?, category = ?, choice_a = ?, choice_b= ?, choice_c = ?, choice_d = ?, correct_answer = ? WHERE question_id = ?";
+   private final String DELETE_CMD = "DELETE FROM question WHERE question_id = ?";
 
     /**
      * Creates a QuestionRepository and database connection
@@ -75,6 +78,96 @@ public class QuestionRepository {
     }
 
     /**
+     * Retrieves questions within a specific category
+     * @param category category being searched for
+     * @return list of questions that match under the searched category
+     */
+    public List<Question> getQuestionsByCategory(String category) {
+        List<Question> questions = new ArrayList<>();
+
+        try(PreparedStatement stmt = conn.prepareStatement(GET_BY_CATEGORY_CMD)) {
+            stmt.setString(1, category);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    questions.add(mapRow(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return questions;
+    }
+
+    /**
+     * Retrieves all categories from the table
+     * @return list of categories
+     */
+    public List<String> getAllCategories() {
+        List<String> categories = new ArrayList<>();
+
+        String categoryQuery = "SELECT DISTINCT category FROM question";
+
+        try (PreparedStatement stmt = conn.prepareStatement(categoryQuery);
+            ResultSet rs = stmt.executeQuery()) {
+                 while (rs.next()) {
+                    categories.add(rs.getString("category"));
+                }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return categories;
+    }
+
+    /**
+     * Retrieves questions where the question text matches with a specified keyword.
+     * @param keyword the text to search for
+     * @return the list of questions whose text matches the keyword or an empty list of no matches found.
+     */
+    public List<Question> getQuestionsByKeyword(String keyword) {
+        List<Question> questions = new ArrayList<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(GET_BY_KEYWORD_CMD)) {
+            // adding % so the keyword can appear anywhere in the question
+            stmt.setString(1, "%" + keyword + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    questions.add(mapRow(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return questions;
+    }
+
+    /**
+     * Retrieves questions that matches with a specified keyword and category.
+     * @param keyword
+     * @param category
+     * @return the list of questions whose text matches the keyword or an empty list of no matches found.
+     */
+    public List<Question> getQuestionsByCategoryAndKeyword(String keyword, String category) {
+        List<Question> questions = new ArrayList<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(GET_BY_CATEGORY_AND_KEYWORD_CMD)) {
+            stmt.setString(1,  category );
+            // adding % so the keyword can appear anywhere in the question
+            stmt.setString(2, "%" + keyword + "%");
+
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    questions.add(mapRow(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return questions;
+    }
+    /**
      * Add Question to the database
      * @param question Question to be added
      * @return added question - otherwise null
@@ -83,11 +176,12 @@ public class QuestionRepository {
         try (PreparedStatement addStmt = conn.prepareStatement(INSERT_CMD,
                 Statement.RETURN_GENERATED_KEYS)) {
             addStmt.setString(1, question.getQuestionText());
-            addStmt.setString(2, question.getChoiceA());
-            addStmt.setString(3, question.getChoiceB());
-            addStmt.setString(4, question.getChoiceC());
-            addStmt.setString(5, question.getChoiceD());
-            addStmt.setString(6, question.getCorrectAnswer());
+            addStmt.setString(2, question.getCategory());
+            addStmt.setString(3, question.getChoiceA());
+            addStmt.setString(4, question.getChoiceB());
+            addStmt.setString(5, question.getChoiceC());
+            addStmt.setString(6, question.getChoiceD());
+            addStmt.setString(7, question.getCorrectAnswer());
 
             addStmt.executeUpdate();
 
@@ -111,12 +205,13 @@ public class QuestionRepository {
     public Question updateQuestion(Question question) {
         try (PreparedStatement updateStmt = conn.prepareStatement(UPDATE_CMD)){
             updateStmt.setString(1, question.getQuestionText());
-            updateStmt.setString(2, question.getChoiceA());
-            updateStmt.setString(3, question.getChoiceB());
-            updateStmt.setString(4, question.getChoiceC());
-            updateStmt.setString(5, question.getChoiceD());
-            updateStmt.setString(6, question.getCorrectAnswer());
-            updateStmt.setInt(7, question.getQuestionId());
+            updateStmt.setString(2, question.getCategory());
+            updateStmt.setString(3, question.getChoiceA());
+            updateStmt.setString(4, question.getChoiceB());
+            updateStmt.setString(5, question.getChoiceC());
+            updateStmt.setString(6, question.getChoiceD());
+            updateStmt.setString(7, question.getCorrectAnswer());
+            updateStmt.setInt(8, question.getQuestionId());
 
             updateStmt.executeUpdate();
 
@@ -154,6 +249,7 @@ public class QuestionRepository {
             return new Question(
                     resultSet.getInt("question_id"),
                     resultSet.getString("question_text"),
+                    resultSet.getString("category"),
                     resultSet.getString("choice_a"),
                     resultSet.getString("choice_b"),
                     resultSet.getString("choice_c"),

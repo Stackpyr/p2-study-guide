@@ -10,15 +10,22 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
-
+import java.util.List;
 /**
  * [Brief one-sentence description of what this class does.]
  *
  * @author Analiza Boehning
- * @version 0.1.0
+ * @version 0.1.1
  * @since 8/3/2026
  */
 public class AddQuestionController extends BaseController {
+    // Fixed category choices - can add more later but for now consolidating the choices to three
+    private static final List<String> CATEGORIES = List.of(
+            "Object-Oriented Programming",
+            "Databases",
+            "Software Engineering"
+    );
+
     // Question text area
     @FXML
     private TextArea questionTextArea;
@@ -51,7 +58,7 @@ public class AddQuestionController extends BaseController {
 
     @FXML
     public void initialize() {
-
+        categoryChoiceBox.getItems().addAll(CATEGORIES);
     }
 
     @FXML
@@ -77,11 +84,13 @@ public class AddQuestionController extends BaseController {
             return;
         }
 
-        // TODO: Category needs to be implemented in Question model and DB for this check.
-//        if (categoryChoiceBox.getValue() == null) {
-//            System.out.println("Please select category");
-//            return;
-//        }
+        // Check if a category has been selected
+        if (categoryChoiceBox.getValue() == null) {
+            System.out.println("Please select category");
+            return;
+        }
+
+        String category = categoryChoiceBox.getValue();
 
         String A = choiceA.getText();
         String B = choiceB.getText();
@@ -103,7 +112,7 @@ public class AddQuestionController extends BaseController {
 
         QuestionRepository questionRepository = new QuestionRepository();
 
-        Question newQuestion = new Question(questionTextArea.getText());
+        Question newQuestion = new Question(questionTextArea.getText(), category);
 
         newQuestion.setChoiceA(choiceA.getText());
         newQuestion.setChoiceB(choiceB.getText());
@@ -111,10 +120,11 @@ public class AddQuestionController extends BaseController {
         newQuestion.setChoiceD(choiceD.getText());
         newQuestion.setCorrectAnswer(correctAnswer);
 
-        questionRepository.addQuestion(newQuestion);
-        System.out.printf("Added question: %s", newQuestion);
+        Question savedQuestion = questionRepository.addQuestion(newQuestion);
+        System.out.printf("Added question: %s%n", savedQuestion);
 
-        // TODO: After saving, the scene should swap back to the Question bank scene.
+        // After saving, the scene should swap back to the Question bank scene.
+        swapScene(event, SceneType.QUESTION_BANK);
     }
 
     @FXML

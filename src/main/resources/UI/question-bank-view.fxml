@@ -1,40 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="UI.QuestionBankController"
-            prefHeight="400.0" prefWidth="600.0">
+<?import javafx.scene.text.Text?>
+
+<BorderPane
+        xmlns="http://javafx.com/javafx/17.0.12"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="UI.QuestionBankController"
+        stylesheets="@app.css">
+
     <top>
-        <HBox fx:id="titleBar" alignment="CENTER_LEFT" prefHeight="36.0" styleClass="title-bar">
+        <HBox
+                fx:id="titleBar"
+                alignment="CENTER_LEFT"
+                prefHeight="36.0"
+                styleClass="title-bar">
+
             <padding>
                 <Insets left="14.0" right="6.0" />
             </padding>
-        </HBox>
+
+            <Label styleClass="title-bar-label"
+                    text="Otter Do Better"/>
+
+            <Region HBox.hgrow="ALWAYS" />
+
+            <Label fx:id="sessionLabel"
+                   styleClass="title-bar-session-label"
+                   text="Not logged in"/>
+
+            <Button onAction="#onMinimizeClick"
+                    styleClass="title-bar-button"
+                    text="_"/>
+            <Button onAction="#onCloseClick"
+                    styleClass="title-bar-button"
+                    text="X"/>
+             </HBox>
     </top>
 
     <center>
-        <VBox alignment="TOP_CENTER" spacing="18.0" BorderPane.alignment="CENTER">
-            <padding>
-                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
-            </padding>
+        <StackPane>
             <children>
-                <Text id="lblTitle" fill="#0b49b4" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="page-title" text="Question Bank">
-                    <font>
-                        <Font size="24.0" />
-                    </font>
-                </Text>
 
-                <TableView VBox.vgrow="ALWAYS" />
+                <VBox maxWidth="900.0"
+                      spacing="22.0"
+                      styleClass="card">
+
+                    <children>
+
+                        <Text styleClass="page-title" text="Question Bank">
+                            <font>
+                                <Font size="26.0"/>
+                            </font>
+                        </Text>
+
+                        <Label styleClass="page-subtitle"
+                               text="Search and filter questions."/>
+
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label styleClass="field-label"
+                                   text="Search: "/>
+
+                            <TextField fx:id="searchQuestionsField" prefWidth="300.0" promptText="Search questions..."/>
+
+                            <Label styleClass="field-label"
+                                   text="Category: "/>
+
+                            <ComboBox fx:id="categoryChoiceBox" prefWidth="220.0"/>
+
+                        </HBox>
+
+                        <Label fx:id="noMatchesLabel"
+                               styleClass="error-label"
+                               text="No matches found"
+                               visible="false"/>
+
+                        <TableView fx:id="questionTable" prefHeight="400.0" VBox.vgrow="ALWAYS">
+
+                            <columns>
+
+                                <TableColumn fx:id="questionColumn"
+                                             prefWidth="550.0"
+                                             text="Question"/>
+
+                                <TableColumn fx:id="categoryColumn"
+                                             prefWidth="550.0"
+                                             text="Category"/>
+
+                            </columns>
+
+                        </TableView>
+
+                        <HBox alignment="CENTER" spacing="12.0">
+
+                            <Button onAction="#onAddQuestionClicked"
+                                    styleClass="btn-primary"
+                                    text="Add Question"/>
+
+                            <Button fx:id="logout"
+                                    mnemonicParsing="false"
+                                    onMouseClicked="#onLogoutClick"
+                                    styleClass="btn-link"
+                                    text="Log Out"/>
+
+                        </HBox>
+                    </children>
+                </VBox>
             </children>
-        </VBox>
+        </StackPane>
     </center>
 </BorderPane>
