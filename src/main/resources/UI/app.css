@@ -7,6 +7,11 @@
   -fx-font-family: "Segoe UI", sans-serif;
 }
 
+.transparent-scroll-pane,
+.transparent-scroll-pane > .viewport {
+  -fx-background-color: transparent;
+}
+
 .title-bar {
   -fx-background-color: #0b49b4;
 }
@@ -49,6 +54,7 @@
 .page-title {
   -fx-fill: #0b49b4;
   -fx-font-weight: bold;
+  -fx-font-size: 26px;
 }
 
 .page-subtitle {

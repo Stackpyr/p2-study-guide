@@ -70,9 +70,9 @@ class LoginControllerUITest extends ApplicationTest {
     clickOn("#txtPassword").write(PASSWORD);
     clickOn("#btnLogin");
 
-    // #takeQuizButton should exist after successful login, so verify
-    Button takeQuiz = lookup("#takeQuizButton").queryAs(Button.class);
-    assertNotNull(takeQuiz);
+    // #startQuizButton should exist after successful login, so verify
+    Button startQuiz = lookup("#startQuizButton").queryAs(Button.class);
+    assertNotNull(startQuiz);
     assertTrue(AuthService.getInstance().isLoggedIn());
     assertEquals(USERNAME, AuthService.getInstance().getCurrentAccount().getUsername());
   }

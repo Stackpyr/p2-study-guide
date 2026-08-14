@@ -4,100 +4,114 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
 <BorderPane
         xmlns="http://javafx.com/javafx/17.0.12"
         xmlns:fx="http://javafx.com/fxml/1"
         fx:controller="UI.QuestionBankController"
+        prefHeight="600.0"
+        prefWidth="900.0"
         stylesheets="@app.css">
 
     <top>
-        <HBox
-                fx:id="titleBar"
-                alignment="CENTER_LEFT"
-                prefHeight="36.0"
-                styleClass="title-bar">
+        <VBox>
+            <children>
+                <HBox
+                        fx:id="titleBar"
+                        alignment="CENTER_LEFT"
+                        prefHeight="36.0"
+                        styleClass="title-bar">
 
-            <padding>
-                <Insets left="14.0" right="6.0" />
-            </padding>
+                    <padding>
+                        <Insets left="14.0" right="6.0" />
+                    </padding>
 
-            <Label styleClass="title-bar-label"
-                    text="Otter Do Better"/>
+                    <Label styleClass="title-bar-label"
+                            text="Otter Do Better"/>
 
-            <Region HBox.hgrow="ALWAYS" />
+                    <Region HBox.hgrow="ALWAYS" />
 
-            <Label fx:id="sessionLabel"
-                   styleClass="title-bar-session-label"
-                   text="Not logged in"/>
+                    <Label fx:id="sessionLabel"
+                           styleClass="title-bar-session-label"
+                           text="Not logged in"/>
 
-            <Button onAction="#onMinimizeClick"
-                    styleClass="title-bar-button"
-                    text="_"/>
-            <Button onAction="#onCloseClick"
-                    styleClass="title-bar-button"
-                    text="X"/>
-             </HBox>
+                    <Button onAction="#onMinimizeClick"
+                            styleClass="title-bar-button"
+                            text="_"/>
+                    <Button onAction="#onCloseClick"
+                            styleClass="title-bar-button"
+                            text="X"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="toolbar-strip">
+                    <padding>
+                        <Insets bottom="14.0" left="20.0" right="20.0" top="14.0"/>
+                    </padding>
+                    <children>
+                        <TextField fx:id="searchQuestionsField" promptText="Search questions..." HBox.hgrow="ALWAYS"/>
+
+                        <Label styleClass="field-label"
+                               text="Category: "/>
+
+                        <ComboBox fx:id="categoryChoiceBox" prefWidth="220.0"/>
+
+                        <Button onAction="#onBackClick"
+                                styleClass="btn-secondary"
+                                text="Back to Dashboard"/>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
     </top>
 
     <center>
-        <StackPane>
-            <children>
-
-                <VBox maxWidth="900.0"
-                      spacing="22.0"
-                      styleClass="card">
+        <ScrollPane fitToWidth="true" styleClass="transparent-scroll-pane">
+            <content>
+                <VBox spacing="14.0">
+                    <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                    </padding>
 
                     <children>
 
-                        <Text styleClass="page-title" text="Question Bank">
-                            <font>
-                                <Font size="26.0"/>
-                            </font>
-                        </Text>
+                        <Text styleClass="page-title" text="Question Bank"/>
 
                         <Label styleClass="page-subtitle"
                                text="Search and filter questions."/>
-
-                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                            <Label styleClass="field-label"
-                                   text="Search: "/>
-
-                            <TextField fx:id="searchQuestionsField" prefWidth="300.0" promptText="Search questions..."/>
-
-                            <Label styleClass="field-label"
-                                   text="Category: "/>
-
-                            <ComboBox fx:id="categoryChoiceBox" prefWidth="220.0"/>
-
-                        </HBox>
 
                         <Label fx:id="noMatchesLabel"
                                styleClass="error-label"
                                text="No matches found"
                                visible="false"/>
 
+                        <Label fx:id="statusLabel"
+                               styleClass="page-subtitle"
+                               wrapText="true"/>
+
                         <TableView fx:id="questionTable" prefHeight="400.0" VBox.vgrow="ALWAYS">
 
                             <columns>
 
                                 <TableColumn fx:id="questionColumn"
-                                             prefWidth="550.0"
+                                             prefWidth="380.0"
                                              text="Question"/>
 
                                 <TableColumn fx:id="categoryColumn"
-                                             prefWidth="550.0"
+                                             prefWidth="180.0"
                                              text="Category"/>
+
+                                <TableColumn fx:id="actionsColumn"
+                                             prefWidth="90.0"
+                                             text="Actions"/>
 
                             </columns>
 
@@ -118,7 +132,7 @@
                         </HBox>
                     </children>
                 </VBox>
-            </children>
-        </StackPane>
+            </content>
+        </ScrollPane>
     </center>
 </BorderPane>

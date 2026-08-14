@@ -53,9 +53,6 @@ public class AddQuestionController extends BaseController {
     private ToggleGroup correctAnswer;
 
     @FXML
-    private Label sessionLabel;
-
-    @FXML
     public void initialize() {
         super.initialize();
         categoryChoiceBox.getItems().addAll(CATEGORIES);

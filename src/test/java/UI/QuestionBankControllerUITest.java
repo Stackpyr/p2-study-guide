@@ -9,10 +9,13 @@
 package UI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import Data.DatabaseManager;
+import Data.Question;
+import Data.QuestionRepository;
 import Service.AuthService;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Button;
@@ -20,11 +23,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
-
-import javax.swing.text.TabExpander;
 
 public class QuestionBankControllerUITest extends ApplicationTest {
 
@@ -76,14 +78,17 @@ public class QuestionBankControllerUITest extends ApplicationTest {
     void questionTableTest() {
         TableView<?> questionTable = lookup("#questionTable").queryAs(TableView.class);
         assertNotNull(questionTable);
-        assertEquals(2, questionTable.getColumns().size());
+        assertEquals(3, questionTable.getColumns().size());
 
         TableColumn<?, ?> questionColumn = questionTable.getColumns().get(0);
 
         TableColumn<?, ?> categoryColumn = questionTable.getColumns().get(1);
 
+        TableColumn<?, ?> actionsColumn = questionTable.getColumns().get(2);
+
         assertEquals("Question", questionColumn.getText());
         assertEquals("Category", categoryColumn.getText());
+        assertEquals("Actions", actionsColumn.getText());
     }
 
     /**
@@ -95,5 +100,41 @@ public class QuestionBankControllerUITest extends ApplicationTest {
 
         assertNotNull(noMatchesLabel);
         assertTrue(noMatchesLabel.isVisible());
+    }
+
+    /**
+     * Verify clicking a row's delete button, then confirming, removes the question from the
+     * table and shows the "Question has been deleted." status message.
+     */
+    @Test
+    void deleteQuestion_removesRowAndShowsMessage() {
+        Question question = new Question("What is the capital of France?", "Databases");
+        question.setChoiceA("Paris");
+        question.setChoiceB("Lyon");
+        question.setChoiceC("Nice");
+        question.setChoiceD("Marseille");
+        question.setCorrectAnswer("Paris");
+        Question saved = new QuestionRepository().addQuestion(question);
+
+        // the table was already loaded (empty) in start(), so force a reload by pressing Enter
+        // in the search field with no keyword - this hits the "no filters" branch in
+        // filterQuestions(), which reloads every question from the database
+        clickOn("#searchQuestionsField").push(KeyCode.ENTER);
+
+        TableView<?> questionTable = lookup("#questionTable").queryAs(TableView.class);
+        assertEquals(1, questionTable.getItems().size());
+
+        clickOn("🗑");
+        clickOn("Yes"); // confirm the delete in the resulting Alert dialog
+
+        assertEquals(0, questionTable.getItems().size());
+
+        Label statusLabel = lookup("#statusLabel").queryAs(Label.class);
+        assertEquals("Question has been deleted.", statusLabel.getText());
+
+        Label noMatchesLabel = lookup("#noMatchesLabel").queryAs(Label.class);
+        assertTrue(noMatchesLabel.isVisible());
+
+        assertFalse(new QuestionRepository().getAllQuestions().contains(saved));
     }
 }

@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -33,6 +34,8 @@
     </HBox>
   </top>
   <center>
+    <ScrollPane fitToWidth="true" styleClass="transparent-scroll-pane">
+    <content>
     <StackPane>
       <children>
         <VBox alignment="CENTER" maxWidth="580.0" spacing="24.0" styleClass="card">
@@ -106,5 +109,7 @@
         </VBox>
       </children>
     </StackPane>
+    </content>
+    </ScrollPane>
   </center>
 </BorderPane>
