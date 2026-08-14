@@ -130,7 +130,7 @@ public class AddQuestionController extends BaseController {
     @FXML
     protected void onCancelClick(ActionEvent event) {
         System.out.println("Cancelled by user");
+        swapScene(event, SceneType.QUESTION_BANK);
     }
 
-    // TODO user can navigate back to the question scene.
 }
