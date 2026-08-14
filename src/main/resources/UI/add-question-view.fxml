@@ -24,13 +24,38 @@
     </fx:define>
 
     <top>
-        <HBox fx:id="titleBar" alignment="CENTER_LEFT" prefHeight="36.0" styleClass="title-bar">
+        <HBox
+                fx:id="titleBar"
+                alignment="CENTER_LEFT"
+                prefHeight="36.0"
+                styleClass="title-bar">
+
             <padding>
-                <Insets left="14.0" right="6.0" />
+                <Insets left="14.0" right="6.0"/>
             </padding>
+
+            <Label
+                    styleClass="title-bar-label"
+                    text="Otter Do Better"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label
+                    fx:id="sessionLabel"
+                    styleClass="title-bar-session-label"
+                    text="Not logged in"/>
+
+            <Button
+                    onAction="#onMinimizeClick"
+                    styleClass="title-bar-button"
+                    text="_"/>
+
+            <Button
+                    onAction="#onCloseClick"
+                    styleClass="title-bar-button"
+                    text="X"/>
         </HBox>
     </top>
-
     <center>
         <StackPane>
             <children>
