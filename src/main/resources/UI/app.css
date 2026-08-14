@@ -42,6 +42,10 @@
   -fx-padding: 36 44 36 44;
 }
 
+.add-question-card {
+  -fx-padding: 24 36 24 36;
+}
+
 .page-title {
   -fx-fill: #0b49b4;
   -fx-font-weight: bold;
