@@ -4,12 +4,8 @@ import Data.Question;
 import Data.QuestionRepository;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
+
 import java.util.List;
 /**
  * [Brief one-sentence description of what this class does.]
@@ -57,7 +53,11 @@ public class AddQuestionController extends BaseController {
     private ToggleGroup correctAnswer;
 
     @FXML
+    private Label sessionLabel;
+
+    @FXML
     public void initialize() {
+        super.initialize();
         categoryChoiceBox.getItems().addAll(CATEGORIES);
     }
 
